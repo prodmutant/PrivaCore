@@ -2,6 +2,13 @@
 
 **A modular security toolkit for Windows — formerly "ProScanner".**
 
+[![Release](https://img.shields.io/github/v/release/prodmutant/PrivaCore?label=release&color=58A6FF)](https://github.com/prodmutant/PrivaCore/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/prodmutant/PrivaCore/total?color=3FB950)](https://github.com/prodmutant/PrivaCore/releases)
+![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-1F6FEB)
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
+![Language](https://img.shields.io/badge/C%23%20%2B%20WPF-239120?logo=csharp&logoColor=white)
+[![Stars](https://img.shields.io/github/stars/prodmutant/PrivaCore?style=flat&color=E3B341)](https://github.com/prodmutant/PrivaCore/stargazers)
+
 > ⚠️ **For authorised security testing only.** Use PrivaCore against networks and systems you
 > own or have explicit written permission to test. You are responsible for how you use it.
 
@@ -66,6 +73,31 @@ multi-tenancy, TLS on the wire, and a real database backend.
 module system, and the first real modules exist and work. I'll keep extending it toward that
 enterprise-grade goal — but as a solo, part-time effort now shared openly, so others can use it
 and (hopefully) contribute.
+
+---
+
+## Screenshots
+
+**SOC dashboard** — customizable widgets aggregating every module's data:
+
+![PrivaCore SOC dashboard](docs/screenshots/dashboard.png)
+
+**SIEM — Security overview** — detections, risk scoring, MITRE tactics, and live events (shown with generated demo data):
+
+![PrivaCore SIEM security overview](docs/screenshots/siem.png)
+
+<details>
+<summary><b>More screenshots</b></summary>
+
+**Network IDS** — signature + behavioural detections, running as a standalone sensor:
+
+![PrivaCore IDS](docs/screenshots/ids.png)
+
+**Honeypot** — decoy services with credential-capture:
+
+![PrivaCore Honeypot](docs/screenshots/honeypot.png)
+
+</details>
 
 ---
 
