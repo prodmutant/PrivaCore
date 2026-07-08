@@ -76,15 +76,17 @@ and (hopefully) contribute.
 These live in the main app and are always available:
 
 - **Dashboard** — SOC-style aggregation of module data into freely-positionable widgets.
-- **Port Scanner** — TCP/UDP scanning, multiple scan modes, banner grabbing, service fingerprinting.
+- **Port & Vulnerability Scanner** — TCP/UDP scanning, multiple scan modes, banner grabbing, service
+  fingerprinting, and NVD CVE lookup with CVSS scoring + export.
 - **Network Discovery** — ARP + ICMP subnet sweep, OS fingerprinting, MAC vendor lookup.
 - **Network Topology** — multi-phase discovery → router identification → hierarchy mapping.
 - **Traffic Analysis** — live packet capture, protocol dissectors, conversation grouping, threat scoring.
-- **Vulnerability Scanner** — port scan → NVD CVE lookup → CVSS scoring → export.
 - **POC Explorer** — CVE-linked exploit search and proof-of-concept workflow helpers.
 - **SSH Manager** — multi-host SSH client with in-app terminal and file browser.
 - **Reports** — self-contained single-file HTML reports (no external/CDN dependencies).
-- **Gallery & Achievements** — screenshots and a gamified progress tracker.
+- **Gallery** — auto-captured and manual screenshots.
+- **API Keys** — a secure, DPAPI-encrypted manager for the optional third-party keys (NVD, OpenAI,
+  Anthropic, Shodan, VirusTotal, …); keys are stored encrypted and never leave your machine.
 
 ### Modules (the modular, remote-capable part)
 
@@ -137,6 +139,20 @@ If one of these is your area, this is exactly the kind of thing a contributor co
   ships in the source. Everything else works without it.
 - **A second machine** — to actually try the modular part: run a standalone module (IDS/SIEM) or
   the agent on another box and connect to it from the console.
+
+---
+
+## Download
+
+Prebuilt, **self-contained** binaries (no .NET install needed) are on the
+[**Releases**](https://github.com/prodmutant/PrivaCore/releases/latest) page:
+
+- **PrivaCore-Console-win-x64.exe** — the main console (start here)
+- **PrivaCore-IDS / SIEM / Honeypot-win-x64.exe** — the standalone modules
+- **privacore-agent-win / linux / osx-x64** — the cross-OS log-shipping agent
+
+Run the console as **Administrator**. The binaries are unsigned, so Windows SmartScreen may warn on
+first run (**More info → Run anyway**).
 
 ---
 
