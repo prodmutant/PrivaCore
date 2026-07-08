@@ -1,0 +1,985 @@
+<Page x:Class="PROSCANNERCONT.Views.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+      Background="{DynamicResource BackgroundBrush}"
+      Title="Settings">
+
+  <Page.Resources>
+
+    <!-- Section card -->
+    <Style x:Key="SectionCard" TargetType="Border">
+      <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusLarge}"/>
+      <Setter Property="Padding" Value="24,20"/>
+      <Setter Property="Margin" Value="0,0,0,16"/>
+    </Style>
+
+    <!-- Section header row -->
+    <Style x:Key="SectionHeader" TargetType="StackPanel">
+      <Setter Property="Orientation" Value="Horizontal"/>
+      <Setter Property="Margin" Value="0,0,0,18"/>
+    </Style>
+
+    <!-- Section icon badge -->
+    <Style x:Key="SectionIconBadge" TargetType="Border">
+      <Setter Property="Width" Value="34"/>
+      <Setter Property="Height" Value="34"/>
+      <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusNormal}"/>
+      <Setter Property="Margin" Value="0,0,12,0"/>
+    </Style>
+
+    <!-- Section title -->
+    <Style x:Key="SectionTitle" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+      <Setter Property="FontSize" Value="15"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Field label -->
+    <Style x:Key="FieldLabel" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="Margin" Value="0,0,0,5"/>
+    </Style>
+
+    <!-- Setting row: label left, control right -->
+    <Style x:Key="SettingRow" TargetType="Grid">
+      <Setter Property="Margin" Value="0,0,0,14"/>
+    </Style>
+
+    <!-- Thin separator -->
+    <Style x:Key="SectionDivider" TargetType="Border">
+      <Setter Property="Height" Value="1"/>
+      <Setter Property="Background" Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="Margin" Value="0,14,0,14"/>
+      <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+
+  </Page.Resources>
+
+  <!-- ─── Root Grid ─────────────────────────────────────────────────────── -->
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- ═══ PAGE HEADER ═══════════════════════════════════════════════════ -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource SecondaryBackgroundBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,0,0,1"
+            Padding="28,18,28,18">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel>
+          <TextBlock Text="Settings"
+                     FontSize="22" FontWeight="Bold"
+                     Foreground="{DynamicResource TextBrush}"
+                     FontFamily="{DynamicResource PrimaryFont}"/>
+          <TextBlock Text="Appearance, AI assistant, and general preferences"
+                     Foreground="{DynamicResource SubtleTextBrush}"
+                     FontSize="12" Margin="0,4,0,0"
+                     FontFamily="{DynamicResource PrimaryFont}"/>
+        </StackPanel>
+
+        <!-- Save indicator -->
+        <Border Grid.Column="1" CornerRadius="{DynamicResource CornerRadiusNormal}"
+                Background="{DynamicResource HoverBrush}"
+                Padding="10,6" VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal">
+            <fa:IconBlock Icon="Save" Foreground="{DynamicResource SuccessBrush}"
+                          FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+            <TextBlock Text="Auto-saved" Foreground="{DynamicResource SuccessBrush}"
+                       FontSize="11" FontFamily="{DynamicResource PrimaryFont}"
+                       VerticalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- ═══ SCROLLABLE CONTENT ════════════════════════════════════════════ -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="28,20,28,28">
+
+        <!-- ══════════════════════════════════════════════════════
+             SECTION 1: THEME
+        ══════════════════════════════════════════════════════ -->
+        <Border Style="{StaticResource SectionCard}">
+          <StackPanel>
+
+            <!-- Header -->
+            <StackPanel Style="{StaticResource SectionHeader}">
+              <Border Style="{StaticResource SectionIconBadge}"
+                      Background="{DynamicResource AccentBrush}">
+                <fa:IconBlock Icon="Paintbrush" Foreground="White" FontSize="15"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Border>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Theme" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="Choose the app's colour scheme and personality"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           FontSize="11" FontFamily="{DynamicResource PrimaryFont}"
+                           Margin="0,2,0,0"/>
+              </StackPanel>
+            </StackPanel>
+
+            <!-- 2×4 Theme card grid -->
+            <UniformGrid Columns="2">
+
+              <!-- Phantom Dark -->
+              <Border x:Name="Card_PhantomDark"
+                      Margin="0,0,6,6" Cursor="Hand" Height="140"
+                      Background="#0D1117" CornerRadius="8" BorderThickness="2"
+                      BorderBrush="#30363D" MouseLeftButtonDown="ThemeCard_Click"
+                      Tag="Phantom Dark">
+                <Grid>
+                  <StackPanel Margin="14,12,14,10">
+                    <!-- Mini UI preview -->
+                    <Grid Height="64" Margin="0,0,0,0">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <Border Background="#161B22" CornerRadius="4,0,0,4">
+                        <StackPanel Margin="4,8,4,0">
+                          <Border Height="4" Background="#58A6FF" CornerRadius="2" Width="18" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                          <Border Height="3" Background="#30363D" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#30363D" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#30363D" CornerRadius="1"/>
+                        </StackPanel>
+                      </Border>
+                      <StackPanel Grid.Column="1" Background="#0D1117" Margin="5,5,4,4">
+                        <Border Height="4" Width="44" Background="#58A6FF" CornerRadius="3" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="3" Background="#21262D" CornerRadius="1" Margin="0,0,0,3"/>
+                        <Border Height="3" Background="#21262D" CornerRadius="1" Width="52" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="13" Background="#161B22" CornerRadius="3"/>
+                      </StackPanel>
+                    </Grid>
+                    <!-- Name + desc -->
+                    <StackPanel Margin="0,8,0,0">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🌑 " FontSize="10"/>
+                        <TextBlock Text="Phantom Dark" Foreground="#E6EDF3" FontSize="12"
+                                   FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                      </StackPanel>
+                      <TextBlock Text="GitHub-dark · Rounded · Segoe UI"
+                                 Foreground="#8B949E" FontSize="10" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </StackPanel>
+                  <!-- Selection ring -->
+                  <Border x:Name="Sel_PhantomDark" Visibility="Collapsed"
+                          CornerRadius="7" BorderBrush="#58A6FF" BorderThickness="2.5"
+                          Background="Transparent">
+                    <Border Background="#1A3A5C" CornerRadius="4"
+                            Width="20" Height="20"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,6,0">
+                      <fa:IconBlock Icon="Check" Foreground="#58A6FF" FontSize="10"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <!-- Neon Terminal -->
+              <Border x:Name="Card_NeonTerminal"
+                      Margin="6,0,0,6" Cursor="Hand" Height="140"
+                      Background="#050505" CornerRadius="0" BorderThickness="2"
+                      BorderBrush="#003322" MouseLeftButtonDown="ThemeCard_Click"
+                      Tag="Neon Terminal">
+                <Grid>
+                  <StackPanel Margin="14,12,14,10">
+                    <Grid Height="64">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <Border Background="#0C0C0C"/>
+                      <StackPanel Grid.Column="1" Background="#050505" Margin="5,4,4,4">
+                        <TextBlock Text="&gt; SCAN 192.168.1.0" Foreground="#00D9AA" FontFamily="Consolas" FontSize="7" Margin="0,0,0,3"/>
+                        <TextBlock Text="&gt; PORT 22: OPEN"    Foreground="#D4FFE8" FontFamily="Consolas" FontSize="7" Margin="0,0,0,2"/>
+                        <TextBlock Text="&gt; CVE: 3 CRITICAL"  Foreground="#FF0040" FontFamily="Consolas" FontSize="7" Margin="0,0,0,2"/>
+                        <TextBlock Text="▋" Foreground="#00D9AA" FontFamily="Consolas" FontSize="7"/>
+                      </StackPanel>
+                    </Grid>
+                    <StackPanel Margin="0,8,0,0">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⚡ " FontSize="10"/>
+                        <TextBlock Text="Neon Terminal" Foreground="#D4FFE8" FontSize="12"
+                                   FontFamily="Consolas" FontWeight="Bold"/>
+                      </StackPanel>
+                      <TextBlock Text="Sharp edges · Consolas · Hacker"
+                                 Foreground="#007744" FontSize="10" FontFamily="Consolas" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </StackPanel>
+                  <Border x:Name="Sel_NeonTerminal" Visibility="Collapsed"
+                          BorderBrush="#00D9AA" BorderThickness="2.5" Background="Transparent">
+                    <Border Background="#004433" Width="20" Height="20"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,6,0">
+                      <fa:IconBlock Icon="Check" Foreground="#00D9AA" FontSize="10"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <!-- Arctic (Light) -->
+              <Border x:Name="Card_Arctic"
+                      Margin="0,6,6,0" Cursor="Hand" Height="140"
+                      Background="#F6F8FA" CornerRadius="12" BorderThickness="2"
+                      BorderBrush="#D0D7DE" MouseLeftButtonDown="ThemeCard_Click"
+                      Tag="Arctic">
+                <Grid>
+                  <StackPanel Margin="14,12,14,10">
+                    <Grid Height="64">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <Border Background="#FFFFFF" CornerRadius="10,0,0,10">
+                        <StackPanel Margin="4,8,4,0">
+                          <Border Height="4" Background="#0969DA" CornerRadius="3" Width="18" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                          <Border Height="3" Background="#D0D7DE" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#D0D7DE" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#D0D7DE" CornerRadius="1"/>
+                        </StackPanel>
+                      </Border>
+                      <StackPanel Grid.Column="1" Background="#F6F8FA" Margin="5,5,4,4">
+                        <Border Height="4" Width="44" Background="#0969DA" CornerRadius="4" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="3" Background="#EAEEF2" CornerRadius="2" Margin="0,0,0,3"/>
+                        <Border Height="3" Background="#EAEEF2" CornerRadius="2" Width="52" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="13" Background="#FFFFFF" CornerRadius="6" BorderBrush="#D0D7DE" BorderThickness="1"/>
+                      </StackPanel>
+                    </Grid>
+                    <StackPanel Margin="0,8,0,0">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="❄️ " FontSize="10"/>
+                        <TextBlock Text="Arctic" Foreground="#1F2328" FontSize="12"
+                                   FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                      </StackPanel>
+                      <TextBlock Text="Light · Very rounded · Segoe UI"
+                                 Foreground="#57606A" FontSize="10" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </StackPanel>
+                  <Border x:Name="Sel_Arctic" Visibility="Collapsed"
+                          CornerRadius="12" BorderBrush="#0969DA" BorderThickness="2.5" Background="Transparent">
+                    <Border Background="#DBEAFE" Width="20" Height="20"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,6,0">
+                      <fa:IconBlock Icon="Check" Foreground="#0969DA" FontSize="10"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <!-- Midnight Ocean -->
+              <Border x:Name="Card_MidnightOcean"
+                      Margin="6,6,0,0" Cursor="Hand" Height="140"
+                      Background="#0A1628" CornerRadius="6" BorderThickness="2"
+                      BorderBrush="#1E3A5F" MouseLeftButtonDown="ThemeCard_Click"
+                      Tag="Midnight Ocean">
+                <Grid>
+                  <StackPanel Margin="14,12,14,10">
+                    <Grid Height="64">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <Border Background="#102035" CornerRadius="4,0,0,4">
+                        <StackPanel Margin="4,8,4,0">
+                          <Border Height="4" Background="#38BDF8" CornerRadius="3" Width="18" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                          <Border Height="3" Background="#1E3A5F" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#1E3A5F" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#1E3A5F" CornerRadius="1"/>
+                        </StackPanel>
+                      </Border>
+                      <StackPanel Grid.Column="1" Background="#0A1628" Margin="5,5,4,4">
+                        <Border Height="4" Width="44" Background="#38BDF8" CornerRadius="2" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="3" Background="#122033" CornerRadius="1" Margin="0,0,0,3"/>
+                        <Border Height="3" Background="#122033" CornerRadius="1" Width="52" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="13" Background="#102035" CornerRadius="3" BorderBrush="#1E3A5F" BorderThickness="1"/>
+                      </StackPanel>
+                    </Grid>
+                    <StackPanel Margin="0,8,0,0">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🌊 " FontSize="10"/>
+                        <TextBlock Text="Midnight Ocean" Foreground="#B3CDE0" FontSize="12"
+                                   FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                      </StackPanel>
+                      <TextBlock Text="Deep navy · Subtle · Segoe UI"
+                                 Foreground="#4C6B8A" FontSize="10" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </StackPanel>
+                  <Border x:Name="Sel_MidnightOcean" Visibility="Collapsed"
+                          CornerRadius="5" BorderBrush="#38BDF8" BorderThickness="2.5" Background="Transparent">
+                    <Border Background="#0D2B44" Width="20" Height="20"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,6,0">
+                      <fa:IconBlock Icon="Check" Foreground="#38BDF8" FontSize="10"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <!-- Crimson Void -->
+              <Border x:Name="Card_CrimsonVoid"
+                      Margin="0,6,6,0" Cursor="Hand" Height="140"
+                      Background="#0F0A0A" CornerRadius="8" BorderThickness="2"
+                      BorderBrush="#2D1515" MouseLeftButtonDown="ThemeCard_Click"
+                      Tag="Crimson Void">
+                <Grid>
+                  <StackPanel Margin="14,12,14,10">
+                    <Grid Height="64">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <Border Background="#1A1010" CornerRadius="4,0,0,4">
+                        <StackPanel Margin="4,8,4,0">
+                          <Border Height="4" Background="#E53E3E" CornerRadius="2" Width="18" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                          <Border Height="3" Background="#2D1515" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#2D1515" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#2D1515" CornerRadius="1"/>
+                        </StackPanel>
+                      </Border>
+                      <StackPanel Grid.Column="1" Background="#0F0A0A" Margin="5,5,4,4">
+                        <Border Height="4" Width="44" Background="#E53E3E" CornerRadius="4" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="3" Background="#200F0F" CornerRadius="2" Margin="0,0,0,3"/>
+                        <Border Height="3" Background="#200F0F" CornerRadius="2" Width="52" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="13" Background="#1A1010" CornerRadius="4" BorderBrush="#2D1515" BorderThickness="1"/>
+                      </StackPanel>
+                    </Grid>
+                    <StackPanel Margin="0,8,0,0">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🔴 " FontSize="10"/>
+                        <TextBlock Text="Crimson Void" Foreground="#FED7D7" FontSize="12"
+                                   FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                      </StackPanel>
+                      <TextBlock Text="Dark charcoal · Vivid red · Rounded"
+                                 Foreground="#742A2A" FontSize="10" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </StackPanel>
+                  <Border x:Name="Sel_CrimsonVoid" Visibility="Collapsed"
+                          CornerRadius="7" BorderBrush="#E53E3E" BorderThickness="2.5" Background="Transparent">
+                    <Border Background="#742A2A" CornerRadius="4"
+                            Width="20" Height="20"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,6,0">
+                      <fa:IconBlock Icon="Check" Foreground="#E53E3E" FontSize="10"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <!-- Carbon -->
+              <Border x:Name="Card_Carbon"
+                      Margin="6,6,0,0" Cursor="Hand" Height="140"
+                      Background="#1E1E1E" CornerRadius="4" BorderThickness="2"
+                      BorderBrush="#3E3E42" MouseLeftButtonDown="ThemeCard_Click"
+                      Tag="Carbon">
+                <Grid>
+                  <StackPanel Margin="14,12,14,10">
+                    <Grid Height="64">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <Border Background="#252526" CornerRadius="2,0,0,2">
+                        <StackPanel Margin="4,8,4,0">
+                          <Border Height="4" Background="#569CD6" CornerRadius="1" Width="18" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                          <Border Height="3" Background="#3E3E42" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#3E3E42" CornerRadius="1" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#3E3E42" CornerRadius="1"/>
+                        </StackPanel>
+                      </Border>
+                      <StackPanel Grid.Column="1" Background="#1E1E1E" Margin="5,5,4,4">
+                        <Border Height="4" Width="44" Background="#569CD6" CornerRadius="2" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="3" Background="#2D2D30" CornerRadius="1" Margin="0,0,0,3"/>
+                        <Border Height="3" Background="#2D2D30" CornerRadius="1" Width="52" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="13" Background="#252526" CornerRadius="2" BorderBrush="#3E3E42" BorderThickness="1"/>
+                      </StackPanel>
+                    </Grid>
+                    <StackPanel Margin="0,8,0,0">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⬛ " FontSize="10"/>
+                        <TextBlock Text="Carbon" Foreground="#D4D4D4" FontSize="12"
+                                   FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                      </StackPanel>
+                      <TextBlock Text="VS Code-inspired · Sharp · Segoe UI"
+                                 Foreground="#3E3E42" FontSize="10" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </StackPanel>
+                  <Border x:Name="Sel_Carbon" Visibility="Collapsed"
+                          CornerRadius="3" BorderBrush="#569CD6" BorderThickness="2.5" Background="Transparent">
+                    <Border Background="#094771" CornerRadius="2"
+                            Width="20" Height="20"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,6,0">
+                      <fa:IconBlock Icon="Check" Foreground="#9CDCFE" FontSize="10"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <!-- Dracula -->
+              <Border x:Name="Card_Dracula"
+                      Margin="0,6,6,0" Cursor="Hand" Height="140"
+                      Background="#282A36" CornerRadius="10" BorderThickness="2"
+                      BorderBrush="#44475A" MouseLeftButtonDown="ThemeCard_Click"
+                      Tag="Dracula">
+                <Grid>
+                  <StackPanel Margin="14,12,14,10">
+                    <Grid Height="64">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <Border Background="#21222C" CornerRadius="6,0,0,6">
+                        <StackPanel Margin="4,8,4,0">
+                          <Border Height="4" Background="#BD93F9" CornerRadius="3" Width="18" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                          <Border Height="3" Background="#44475A" CornerRadius="2" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#44475A" CornerRadius="2" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#44475A" CornerRadius="2"/>
+                        </StackPanel>
+                      </Border>
+                      <StackPanel Grid.Column="1" Background="#282A36" Margin="5,5,4,4">
+                        <Border Height="4" Width="44" Background="#BD93F9" CornerRadius="5" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="3" Background="#383A59" CornerRadius="2" Margin="0,0,0,3"/>
+                        <Border Height="3" Background="#383A59" CornerRadius="2" Width="52" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="13" Background="#21222C" CornerRadius="5" BorderBrush="#44475A" BorderThickness="1"/>
+                      </StackPanel>
+                    </Grid>
+                    <StackPanel Margin="0,8,0,0">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🧛 " FontSize="10"/>
+                        <TextBlock Text="Dracula" Foreground="#F8F8F2" FontSize="12"
+                                   FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                      </StackPanel>
+                      <TextBlock Text="Classic purple · Rounded · Segoe UI"
+                                 Foreground="#6272A4" FontSize="10" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </StackPanel>
+                  <Border x:Name="Sel_Dracula" Visibility="Collapsed"
+                          CornerRadius="9" BorderBrush="#BD93F9" BorderThickness="2.5" Background="Transparent">
+                    <Border Background="#44475A" CornerRadius="5"
+                            Width="20" Height="20"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,6,0">
+                      <fa:IconBlock Icon="Check" Foreground="#BD93F9" FontSize="10"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <!-- Solar Warm -->
+              <Border x:Name="Card_SolarWarm"
+                      Margin="6,6,0,0" Cursor="Hand" Height="140"
+                      Background="#FFF8F0" CornerRadius="14" BorderThickness="2"
+                      BorderBrush="#E8C89A" MouseLeftButtonDown="ThemeCard_Click"
+                      Tag="Solar Warm">
+                <Grid>
+                  <StackPanel Margin="14,12,14,10">
+                    <Grid Height="64">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="*"/>
+                      </Grid.ColumnDefinitions>
+                      <Border Background="#FFF1E0" CornerRadius="12,0,0,12">
+                        <StackPanel Margin="4,8,4,0">
+                          <Border Height="4" Background="#C05621" CornerRadius="4" Width="18" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                          <Border Height="3" Background="#E8C89A" CornerRadius="2" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#E8C89A" CornerRadius="2" Margin="0,0,0,3"/>
+                          <Border Height="3" Background="#E8C89A" CornerRadius="2"/>
+                        </StackPanel>
+                      </Border>
+                      <StackPanel Grid.Column="1" Background="#FFF8F0" Margin="5,5,4,4">
+                        <Border Height="4" Width="44" Background="#C05621" CornerRadius="6" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="3" Background="#FAEBD7" CornerRadius="3" Margin="0,0,0,3"/>
+                        <Border Height="3" Background="#FAEBD7" CornerRadius="3" Width="52" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <Border Height="13" Background="#FFFFFF" CornerRadius="8" BorderBrush="#E8C89A" BorderThickness="1"/>
+                      </StackPanel>
+                    </Grid>
+                    <StackPanel Margin="0,8,0,0">
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="☀️ " FontSize="10"/>
+                        <TextBlock Text="Solar Warm" Foreground="#2D1B00" FontSize="12"
+                                   FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                      </StackPanel>
+                      <TextBlock Text="Warm cream · Very rounded · Segoe UI"
+                                 Foreground="#7B5023" FontSize="10" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                    </StackPanel>
+                  </StackPanel>
+                  <Border x:Name="Sel_SolarWarm" Visibility="Collapsed"
+                          CornerRadius="13" BorderBrush="#C05621" BorderThickness="2.5" Background="Transparent">
+                    <Border Background="#FEEBC8" CornerRadius="7"
+                            Width="20" Height="20"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,6,0">
+                      <fa:IconBlock Icon="Check" Foreground="#C05621" FontSize="10"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </Border>
+                </Grid>
+              </Border>
+
+            </UniformGrid>
+
+            <!-- Active theme label -->
+            <TextBlock x:Name="CurrentThemeLabel"
+                       Text="Active: Phantom Dark"
+                       Foreground="{DynamicResource SubtleTextBrush}"
+                       FontSize="11" FontFamily="{DynamicResource PrimaryFont}"
+                       Margin="0,14,0,0"/>
+          </StackPanel>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════════
+             SECTION 2: CUSTOM COLOURS
+        ══════════════════════════════════════════════════════ -->
+        <Border Style="{StaticResource SectionCard}">
+          <StackPanel>
+            <StackPanel Style="{StaticResource SectionHeader}">
+              <Border Style="{StaticResource SectionIconBadge}"
+                      Background="{DynamicResource WarningBrush}">
+                <fa:IconBlock Icon="Sliders" Foreground="White" FontSize="15"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Border>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Custom Colours" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="Override any colour while keeping current typography and shape"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           FontSize="11" FontFamily="{DynamicResource PrimaryFont}"
+                           Margin="0,2,0,0"/>
+              </StackPanel>
+            </StackPanel>
+
+            <!-- Helper macro: one color row with label, hex textbox, and swatch -->
+            <!-- 3-column grid repeated for all color slots -->
+            <ItemsControl>
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <UniformGrid Columns="2"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+
+              <!-- PRIMARY BG -->
+              <StackPanel Margin="0,0,8,10">
+                <TextBlock Text="PRIMARY BG" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="PrimaryBackgroundPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="PrimaryBackgroundPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- SECONDARY BG -->
+              <StackPanel Margin="8,0,0,10">
+                <TextBlock Text="SECONDARY BG" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="SecondaryBackgroundPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="SecondaryBackgroundPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- ACCENT -->
+              <StackPanel Margin="0,0,8,10">
+                <TextBlock Text="ACCENT" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="AccentColorPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="AccentColorPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- ACCENT LIGHT -->
+              <StackPanel Margin="8,0,0,10">
+                <TextBlock Text="ACCENT LIGHT" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="AccentLightPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="AccentLightPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource AccentLightBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- TEXT -->
+              <StackPanel Margin="0,0,8,10">
+                <TextBlock Text="TEXT" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="TextColorPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="TextColorPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource TextBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- BORDER -->
+              <StackPanel Margin="8,0,0,10">
+                <TextBlock Text="BORDER" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="BorderColorPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="BorderColorPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource BorderBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- HOVER -->
+              <StackPanel Margin="0,0,8,10">
+                <TextBlock Text="HOVER" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="HoverColorPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="HoverColorPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource HoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- SELECTION -->
+              <StackPanel Margin="8,0,0,10">
+                <TextBlock Text="SELECTION" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="SelectionColorPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="SelectionColorPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource SelectionBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- SUCCESS -->
+              <StackPanel Margin="0,0,8,10">
+                <TextBlock Text="SUCCESS" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="SuccessColorPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="SuccessColorPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource SuccessBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- WARNING -->
+              <StackPanel Margin="8,0,0,10">
+                <TextBlock Text="WARNING" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="WarningColorPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="WarningColorPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource WarningBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+              <!-- CRITICAL -->
+              <StackPanel Margin="0,0,8,10">
+                <TextBlock Text="CRITICAL" Style="{StaticResource FieldLabel}"/>
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                  <TextBox x:Name="CriticalColorPicker" Style="{StaticResource TextBoxBase}" TextChanged="ColorPicker_TextChanged"/>
+                  <Border x:Name="CriticalColorPreview" Grid.Column="1" Width="28" Height="28" Margin="5,0,0,0" CornerRadius="{DynamicResource CornerRadiusNormal}" Background="{DynamicResource CriticalBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                </Grid>
+              </StackPanel>
+
+            </ItemsControl>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+              <Button Content="Apply colours" Click="ApplyCustomTheme_Click"
+                      Style="{StaticResource AccentButtonStyle}"
+                      Margin="0,0,8,0"/>
+              <Button Content="Reset to theme" Click="ResetCustomTheme_Click"
+                      Style="{StaticResource BaseButtonStyle}"/>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════════
+             SECTION 3: AI ASSISTANT
+        ══════════════════════════════════════════════════════ -->
+        <Border Style="{StaticResource SectionCard}">
+          <StackPanel>
+            <StackPanel Style="{StaticResource SectionHeader}">
+              <Border Style="{StaticResource SectionIconBadge}"
+                      Background="{DynamicResource AccentBrush}">
+                <fa:IconBlock Icon="Robot" Foreground="White" FontSize="15"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Border>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="AI Assistant" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="Configure the chat panel's AI provider"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           FontSize="11" FontFamily="{DynamicResource PrimaryFont}"
+                           Margin="0,2,0,0"/>
+              </StackPanel>
+            </StackPanel>
+
+            <!-- Provider -->
+            <Grid Margin="0,0,0,12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel>
+                <TextBlock Text="PROVIDER" Style="{StaticResource FieldLabel}"/>
+                <ComboBox x:Name="AIProviderCombo"
+                          Style="{StaticResource ComboBoxStyle}"
+                          SelectionChanged="AIProviderCombo_SelectionChanged">
+                  <ComboBoxItem Content="OpenAI (GPT-3.5)" Tag="openai-gpt35" IsSelected="True"/>
+                  <ComboBoxItem Content="OpenAI (GPT-4)" Tag="openai-gpt4"/>
+                  <ComboBoxItem Content="Anthropic (Claude)" Tag="anthropic"/>
+                </ComboBox>
+              </StackPanel>
+              <StackPanel Grid.Column="2">
+                <TextBlock Text="MODEL STATUS" Style="{StaticResource FieldLabel}"/>
+                <Border CornerRadius="{DynamicResource CornerRadiusNormal}"
+                        Background="{DynamicResource HoverBrush}"
+                        Padding="10,8" Height="34">
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse x:Name="AIStatusDot" Width="7" Height="7"
+                             Fill="{DynamicResource SuccessBrush}" Margin="0,0,7,0"/>
+                    <TextBlock x:Name="AIStatusLabel" Text="Configured"
+                               Foreground="{DynamicResource SubtleTextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}"
+                               FontSize="{DynamicResource FontSizeSmall}"/>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Grid>
+
+            <!-- API key -->
+            <TextBlock Text="API KEY" Style="{StaticResource FieldLabel}"/>
+            <Grid Margin="0,0,0,12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <PasswordBox x:Name="OpenAIKeyBox"
+                           Style="{StaticResource PasswordBoxStyle}"
+                           PasswordChar="●"
+                           PasswordChanged="OpenAIKeyBox_PasswordChanged"/>
+              <Button Grid.Column="2" Content="Save" Width="70"
+                      Style="{StaticResource AccentButtonStyle}"
+                      Click="SaveAPIKey_Click"/>
+            </Grid>
+
+            <TextBlock FontSize="11" FontFamily="{DynamicResource PrimaryFont}"
+                       Foreground="{DynamicResource SubtleTextBrush}" TextWrapping="Wrap">
+              Your API key is stored locally in AppData and never transmitted anywhere except to the AI provider.
+              Alternatively set the <Run FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}">OPENAI_API_KEY</Run>
+              environment variable before launching.
+            </TextBlock>
+          </StackPanel>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════════
+             SECTION 4: BEHAVIOUR
+        ══════════════════════════════════════════════════════ -->
+        <Border Style="{StaticResource SectionCard}">
+          <StackPanel>
+            <StackPanel Style="{StaticResource SectionHeader}">
+              <Border Style="{StaticResource SectionIconBadge}"
+                      Background="{DynamicResource SuccessBrush}">
+                <fa:IconBlock Icon="Gear" Foreground="White" FontSize="15"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Border>
+              <TextBlock Text="General Behaviour" Style="{StaticResource SectionTitle}"/>
+            </StackPanel>
+
+            <!-- Each row: description left, toggle/checkbox right -->
+            <Grid Margin="0,0,0,12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Enable animations"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="{DynamicResource FontSizeNormal}"/>
+                <TextBlock Text="Smooth transitions and hover effects throughout the app"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="11" Margin="0,2,0,0"/>
+              </StackPanel>
+              <CheckBox x:Name="EnableAnimationsCheckbox" IsChecked="True"
+                        Style="{StaticResource CheckBoxStyle}"
+                        Grid.Column="1" VerticalAlignment="Center"
+                        Margin="20,0,0,0"/>
+            </Grid>
+
+            <Border Style="{StaticResource SectionDivider}"/>
+
+            <Grid Margin="0,0,0,12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Show tooltips"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="{DynamicResource FontSizeNormal}"/>
+                <TextBlock Text="Hover hints on buttons and controls"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="11" Margin="0,2,0,0"/>
+              </StackPanel>
+              <CheckBox x:Name="ShowTooltipsCheckbox" IsChecked="True"
+                        Style="{StaticResource CheckBoxStyle}"
+                        Grid.Column="1" VerticalAlignment="Center"
+                        Margin="20,0,0,0"/>
+            </Grid>
+
+            <Border Style="{StaticResource SectionDivider}"/>
+
+            <Grid Margin="0,0,0,12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Auto-save settings"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="{DynamicResource FontSizeNormal}"/>
+                <TextBlock Text="Persist theme and preferences automatically on change"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="11" Margin="0,2,0,0"/>
+              </StackPanel>
+              <CheckBox x:Name="AutoSaveCheckbox" IsChecked="True"
+                        Style="{StaticResource CheckBoxStyle}"
+                        Grid.Column="1" VerticalAlignment="Center"
+                        Margin="20,0,0,0"/>
+            </Grid>
+
+            <Border Style="{StaticResource SectionDivider}"/>
+
+            <Grid Margin="0,0,0,12">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Alert notification sounds"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="{DynamicResource FontSizeNormal}"/>
+                <TextBlock Text="Play a sound when new IDS Critical or High alerts arrive"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="11" Margin="0,2,0,0"/>
+              </StackPanel>
+              <CheckBox x:Name="AlertSoundsCheckbox" IsChecked="True"
+                        Style="{StaticResource CheckBoxStyle}"
+                        Grid.Column="1" VerticalAlignment="Center"
+                        Margin="20,0,0,0"
+                        Checked="AlertSounds_Changed" Unchecked="AlertSounds_Changed"/>
+            </Grid>
+
+            <Border Style="{StaticResource SectionDivider}"/>
+
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Show status bar"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="{DynamicResource FontSizeNormal}"/>
+                <TextBlock Text="Network interface and connection status at the bottom"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="11" Margin="0,2,0,0"/>
+              </StackPanel>
+              <CheckBox x:Name="ShowStatusBarCheckbox" IsChecked="True"
+                        Style="{StaticResource CheckBoxStyle}"
+                        Grid.Column="1" VerticalAlignment="Center"
+                        Margin="20,0,0,0"/>
+            </Grid>
+          </StackPanel>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════════
+             SECTION 5: ABOUT
+        ══════════════════════════════════════════════════════ -->
+        <Border Style="{StaticResource SectionCard}">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+              <!-- Header -->
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                <Border Style="{StaticResource SectionIconBadge}"
+                        Background="{DynamicResource AccentBrush}">
+                  <fa:IconBlock Icon="InfoCircle" Foreground="White" FontSize="15"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="About PrivaCore" Style="{StaticResource SectionTitle}"/>
+              </StackPanel>
+
+              <TextBlock Text="PrivaCore v1.0.0"
+                         Foreground="{DynamicResource TextBrush}"
+                         FontFamily="{DynamicResource PrimaryFont}"
+                         FontSize="16" FontWeight="SemiBold" Margin="0,0,0,6"/>
+              <TextBlock Text="Advanced network security scanning and monitoring platform."
+                         Foreground="{DynamicResource SubtleTextBrush}"
+                         FontFamily="{DynamicResource PrimaryFont}"
+                         FontSize="12" Margin="0,0,0,14" TextWrapping="Wrap"/>
+
+              <WrapPanel>
+                <Border Background="{DynamicResource HoverBrush}"
+                        CornerRadius="{DynamicResource CornerRadiusNormal}"
+                        Padding="8,4" Margin="0,0,8,6">
+                  <StackPanel Orientation="Horizontal">
+                    <fa:IconBlock Icon="Shield" Foreground="{DynamicResource AccentBrush}"
+                                  FontSize="10" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Port Scanner" Foreground="{DynamicResource SubtleTextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}" FontSize="11"/>
+                  </StackPanel>
+                </Border>
+                <Border Background="{DynamicResource HoverBrush}"
+                        CornerRadius="{DynamicResource CornerRadiusNormal}"
+                        Padding="8,4" Margin="0,0,8,6">
+                  <StackPanel Orientation="Horizontal">
+                    <fa:IconBlock Icon="Eye" Foreground="{DynamicResource SuccessBrush}"
+                                  FontSize="10" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Honeypot" Foreground="{DynamicResource SubtleTextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}" FontSize="11"/>
+                  </StackPanel>
+                </Border>
+                <Border Background="{DynamicResource HoverBrush}"
+                        CornerRadius="{DynamicResource CornerRadiusNormal}"
+                        Padding="8,4" Margin="0,0,8,6">
+                  <StackPanel Orientation="Horizontal">
+                    <fa:IconBlock Icon="ChartLine" Foreground="{DynamicResource WarningBrush}"
+                                  FontSize="10" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Traffic Analysis" Foreground="{DynamicResource SubtleTextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}" FontSize="11"/>
+                  </StackPanel>
+                </Border>
+                <Border Background="{DynamicResource HoverBrush}"
+                        CornerRadius="{DynamicResource CornerRadiusNormal}"
+                        Padding="8,4" Margin="0,0,8,6">
+                  <StackPanel Orientation="Horizontal">
+                    <fa:IconBlock Icon="ShieldHalved" Foreground="{DynamicResource CriticalBrush}"
+                                  FontSize="10" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="IDS" Foreground="{DynamicResource SubtleTextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}" FontSize="11"/>
+                  </StackPanel>
+                </Border>
+              </WrapPanel>
+            </StackPanel>
+
+            <!-- Logo column -->
+            <Border Grid.Column="1" Width="80" Height="80"
+                    CornerRadius="{DynamicResource CornerRadiusLarge}"
+                    Background="{DynamicResource AccentBrush}"
+                    Margin="24,0,0,0" VerticalAlignment="Center">
+              <fa:IconBlock Icon="ShieldHalved" Foreground="White" FontSize="38"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </Grid>
+        </Border>
+
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</Page>

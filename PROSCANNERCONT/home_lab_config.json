@@ -1,0 +1,90 @@
+{
+  "configVersion": "2.0",
+  "name": "Home Lab — Low False-Positive Profile",
+  "description": "Pre-tuned for a home/pentest lab. Raises flood/scan thresholds so normal scanning tools don't spam alerts. Allowlists RFC-1918 ranges for noisy rules (SMB, RDP, SMTP). Enables all HIDS modules. Import this, start monitoring, then try the test scenarios from the docs.",
+  "author": "PrivaCore",
+  "createdAt": "2026-05-11T00:00:00Z",
+
+  "nids": {
+    "replaceRules": false,
+    "ipsMode": false,
+
+    "behavioralThresholds": {
+      "synFloodThreshold":   500,
+      "synFloodWindowSec":   10,
+      "icmpFloodThreshold":  300,
+      "icmpFloodWindowSec":  10,
+      "udpFloodThreshold":  1500,
+      "udpFloodWindowSec":   10,
+      "portScanThreshold":   50,
+      "portScanWindowSec":   20,
+      "bruteForceThreshold": 20,
+      "bruteForceWindowSec": 120
+    },
+
+    "allowlist": [
+      {
+        "ipOrCidr": "192.168.0.0/16",
+        "ruleId":   "SIG-002",
+        "note":     "Local SMB traffic is expected — suppress SMB alert for whole RFC-1918 /16"
+      },
+      {
+        "ipOrCidr": "10.0.0.0/8",
+        "ruleId":   "SIG-002",
+        "note":     "Lab / VPN range — suppress SMB alert"
+      },
+      {
+        "ipOrCidr": "172.16.0.0/12",
+        "ruleId":   "SIG-002",
+        "note":     "Docker / VMware host-only — suppress SMB alert"
+      },
+      {
+        "ipOrCidr": "192.168.0.0/16",
+        "ruleId":   "SIG-016",
+        "note":     "Local SMTP relay (postfix etc.) — suppress outbound SMTP alert"
+      },
+      {
+        "ipOrCidr": "192.168.0.0/16",
+        "ruleId":   "SIG-017",
+        "note":     "Local RDP is expected — suppress RDP alert for LAN"
+      },
+      {
+        "ipOrCidr": "10.0.0.0/8",
+        "ruleId":   "SIG-017",
+        "note":     "VPN range RDP — suppress RDP alert"
+      },
+      {
+        "ipOrCidr": "192.168.0.0/16",
+        "ruleId":   "SIG-018",
+        "note":     "Local VNC — suppress for LAN"
+      },
+      {
+        "ipOrCidr": "127.0.0.1",
+        "ruleId":   null,
+        "note":     "Loopback — suppress ALL alerts from localhost (dev/testing)"
+      }
+    ]
+  },
+
+  "hids": {
+    "pollIntervalSeconds": 5,
+
+    "customWatchPaths": [],
+
+    "additionalProcessBlacklist": [],
+
+    "additionalSuspiciousPorts": [ 8443, 9090, 2222, 8888 ],
+
+    "additionalRegistryKeys": [
+      "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon",
+      "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+    ],
+
+    "enableFileHashing":           true,
+    "enableScheduledTaskMonitor":  true,
+    "enableServiceMonitor":        true,
+    "enableDnsMonitor":            true,
+    "enableSessionMonitor":        true,
+    "enableParentChildDetection":  true
+  }
+}

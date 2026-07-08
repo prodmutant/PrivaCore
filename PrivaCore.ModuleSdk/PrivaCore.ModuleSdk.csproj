@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+	  PrivaCore.ModuleSdk — shared module protocol used by BOTH the main app
+	  (as a controller/client) and every standalone module app (as a host).
+	  Plain net8.0, no UI. Handles framing, PBKDF2 + challenge/response auth,
+	  a pairing-code enrolment gate, and a live event/data-flow channel.
+	-->
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>PrivaCore.ModuleSdk</RootNamespace>
+	</PropertyGroup>
+
+</Project>

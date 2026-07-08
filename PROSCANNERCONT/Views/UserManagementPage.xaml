@@ -1,0 +1,49 @@
+<Page x:Class="PROSCANNERCONT.Views.UserManagementPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+      Background="{DynamicResource BackgroundBrush}">
+    <Grid Margin="28,24,28,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,18">
+            <TextBlock Text="Users &amp; Roles" Style="{DynamicResource HeaderTextStyle}"/>
+            <TextBlock Text="Manage who can sign in to this console and what they can do."
+                       Style="{DynamicResource MutedTextStyle}" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,14">
+            <Button Content="＋ New user" Click="NewUser_Click" Style="{DynamicResource AccentButtonStyle}"
+                    Height="38" Padding="16,0" Margin="0,0,10,0"/>
+            <Button Content="Reset password" Click="ResetPassword_Click" Style="{DynamicResource GhostButtonStyle}"
+                    Height="38" Padding="14,0" Margin="0,0,10,0"/>
+            <Button Content="Enable / disable" Click="ToggleEnabled_Click" Style="{DynamicResource GhostButtonStyle}"
+                    Height="38" Padding="14,0" Margin="0,0,10,0"/>
+            <Button Content="Unlock" Click="Unlock_Click" Style="{DynamicResource GhostButtonStyle}"
+                    Height="38" Padding="14,0" Margin="0,0,10,0"/>
+            <ComboBox x:Name="RoleBox" Width="150" Height="38" Style="{DynamicResource ComboBoxStyle}"
+                      Margin="0,0,10,0" ToolTip="Set role for the selected user" SelectionChanged="Role_Changed"/>
+            <Button Content="Delete" Click="Delete_Click" Style="{DynamicResource GhostButtonStyle}"
+                    Height="38" Padding="14,0" Foreground="{DynamicResource CriticalBrush}"/>
+        </StackPanel>
+
+        <!-- User list -->
+        <DataGrid x:Name="UsersGrid" Grid.Row="2" Style="{DynamicResource DataGridStyle}"
+                  AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                  HeadersVisibility="Column" SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="1.4*"/>
+                <DataGridTextColumn Header="Display name" Binding="{Binding DisplayName}" Width="1.6*"/>
+                <DataGridTextColumn Header="Role" Binding="{Binding RoleText}" Width="1.2*"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusText}" Width="1*"/>
+                <DataGridTextColumn Header="Last login" Binding="{Binding LastLoginText}" Width="1.2*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

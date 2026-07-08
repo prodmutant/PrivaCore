@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<StartupObject>PROSCANNERCONT.App</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Emoji.Wpf" Version="0.3.4" />
+		<PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+		<PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+		<PackageReference Include="LottieSharp" Version="2.4.2" />
+		<PackageReference Include="MacAddressVendorLookup" Version="1.1.13" />
+		<PackageReference Include="MacVendorLookupTable" Version="1.0.2" />
+		<PackageReference Include="MahApps.Metro.IconPacks" Version="5.1.0" />
+		<PackageReference Include="MahApps.Metro.IconPacks.FontAwesome" Version="6.2.1" />
+		<PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+		<PackageReference Include="MaterialDesignThemes.MahApps" Version="3.1.0" />
+		<PackageReference Include="MaterialDesignThemes.Wpf" Version="1.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.3" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="Serilog" Version="4.0.2" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="QuestPDF" Version="2024.7.0" />
+		<PackageReference Include="DocumentFormat.OpenXml" Version="3.0.2" />
+		<PackageReference Include="System.DirectoryServices.Protocols" Version="9.0.0" />
+		<PackageReference Include="PacketDotNet" Version="1.4.8" />
+		<PackageReference Include="SharpCifs.Std" Version="0.2.13" />
+		<PackageReference Include="SharpPcap" Version="6.3.1" />
+		<PackageReference Include="SSH.NET" Version="2025.1.0" />
+		<PackageReference Include="System.Management" Version="9.0.10" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="9.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Renderers\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\PrivaCore.ModuleSdk\PrivaCore.ModuleSdk.csproj" />
+	</ItemGroup>
+
+</Project>

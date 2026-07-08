@@ -1,0 +1,965 @@
+<Window x:Class="PROSCANNERCONT.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PROSCANNERCONT"
+        xmlns:conv="clr-namespace:PROSCANNERCONT.ValueConverters"
+        xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+        mc:Ignorable="d"
+        Title="PrivaCore"
+        Height="820" Width="1280"
+        MinHeight="640" MinWidth="960"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Resources>
+        <conv:MessageBackgroundConverter x:Key="MessageBackgroundConverter"/>
+        <conv:MessageForegroundConverter x:Key="MessageForegroundConverter"/>
+        <conv:MessageAlignmentConverter x:Key="MessageAlignmentConverter"/>
+        <conv:WidthToVisibilityConverter x:Key="WidthToVisibilityConverter"/>
+        <conv:WidthToCollapsedVisibilityConverter x:Key="WidthToCollapsedVisibilityConverter"/>
+
+        <!-- ── Title-bar controls ─────────────────────────────────────────── -->
+        <Style x:Key="TitleBarButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="46"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="{DynamicResource CornerRadiusSmall}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource HoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CloseButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="{DynamicResource CornerRadiusSmall}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource CriticalBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource CriticalBrush}"/>
+                                <Setter TargetName="bd" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Nav Button ─────────────────────────────────────────────────── -->
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Margin" Value="6,2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid ClipToBounds="True">
+                            <!-- Hover / active background -->
+                            <Border x:Name="HoverBorder"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="{DynamicResource CornerRadiusNormal}"/>
+
+                            <!-- Active left-edge accent bar -->
+                            <Rectangle x:Name="ActiveBar"
+                                       Width="4"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Stretch"
+                                       Fill="{DynamicResource AccentBrush}"
+                                       RadiusX="2" RadiusY="2"
+                                       Opacity="0"/>
+
+                            <!-- Icon + label -->
+                            <Grid Margin="10,0,8,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="36"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Icon container with spring bounce -->
+                                <Grid x:Name="IconWrap" Width="36" Height="36"
+                                      RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform x:Name="IconScale" ScaleX="1" ScaleY="1"/>
+                                    </Grid.RenderTransform>
+                                    <!-- Icon background capsule -->
+                                    <Border x:Name="IconBg"
+                                            CornerRadius="{DynamicResource CornerRadiusSmall}"
+                                            Background="Transparent" Opacity="0.12"/>
+                                    <ContentPresenter Content="{TemplateBinding Tag}"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- Label — collapses with sidebar -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0"
+                                            Visibility="{Binding ElementName=NavPanelColumn,
+                                                         Path=Width.Value,
+                                                         Converter={StaticResource WidthToVisibilityConverter}}">
+                                    <TextBlock x:Name="NavLabel"
+                                               Text="{TemplateBinding Content}"
+                                               Foreground="{TemplateBinding Foreground}"
+                                               FontFamily="{DynamicResource PrimaryFont}"
+                                               FontSize="{DynamicResource FontSizeNormal}"
+                                               FontWeight="Medium"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <!-- Hover: spring-bounce + glow -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="HoverBorder" Property="Background" Value="{DynamicResource HoverBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="IconScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="1.22" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BackEase EasingMode="EaseOut" Amplitude="0.6"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="IconScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="1.22" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BackEase EasingMode="EaseOut" Amplitude="0.6"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="IconScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="1" Duration="0:0:0.14"/>
+                                            <DoubleAnimation Storyboard.TargetName="IconScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="1" Duration="0:0:0.14"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                            <!-- Press squish -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="IconScale"
+                                                             Storyboard.TargetProperty="ScaleX"
+                                                             To="0.86" Duration="0:0:0.07"/>
+                                            <DoubleAnimation Storyboard.TargetName="IconScale"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="0.86" Duration="0:0:0.07"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+
+                            <!-- Active state via attached property -->
+                            <DataTrigger Binding="{Binding Path=(local:NavButtonHelper.IsActive),
+                                                   RelativeSource={RelativeSource Self}}" Value="True">
+                                <Setter TargetName="ActiveBar" Property="Opacity" Value="1"/>
+                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                                <Setter TargetName="NavLabel" Property="FontWeight" Value="SemiBold"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Chat send button ───────────────────────────────────────────── -->
+        <Style x:Key="ChatButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="{DynamicResource CornerRadiusNormal}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.65"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Chat message bubble -->
+        <Style x:Key="ChatMessageContainer" TargetType="Border">
+            <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusLarge}"/>
+            <Setter Property="Margin" Value="6,3"/>
+            <Setter Property="Padding" Value="11,8"/>
+            <Setter Property="MaxWidth" Value="220"/>
+        </Style>
+
+        <!-- Nav section header label -->
+        <Style x:Key="NavSectionLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="14,10,8,2"/>
+            <Setter Property="Visibility">
+                <Setter.Value>
+                    <Binding ElementName="NavPanelColumn" Path="Width.Value"
+                             Converter="{StaticResource WidthToVisibilityConverter}"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Outer rounded frame -->
+    <Border x:Name="OuterBorder"
+            CornerRadius="12" ClipToBounds="True"
+            Background="{DynamicResource BackgroundBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44"/><!-- title bar -->
+                <RowDefinition Height="*"/> <!-- main area -->
+            </Grid.RowDefinitions>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 TITLE BAR
+            ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1"
+                    MouseDown="TitleBar_MouseDown">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Logo -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal"
+                                Margin="14,0,0,0" VerticalAlignment="Center">
+                        <Border Width="22" Height="22"
+                                CornerRadius="{DynamicResource CornerRadiusSmall}"
+                                Background="{DynamicResource AccentBrush}"
+                                Margin="0,0,8,0">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" BlurRadius="8"
+                                                  ShadowDepth="0" Opacity="0.4"/>
+                            </Border.Effect>
+                            <fa:IconBlock Icon="Shield" Foreground="White" FontSize="11"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Foreground="{DynamicResource AccentBrush}"
+                                   FontSize="14" FontWeight="Bold"
+                                   FontFamily="{DynamicResource PrimaryFont}"
+                                   VerticalAlignment="Center">Priva</TextBlock>
+                        <TextBlock Foreground="{DynamicResource TextBrush}"
+                                   FontSize="14" FontWeight="Bold"
+                                   FontFamily="{DynamicResource PrimaryFont}"
+                                   VerticalAlignment="Center">Core</TextBlock>
+                    </StackPanel>
+
+                    <!-- Current page breadcrumb (center) -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <fa:IconBlock Icon="ChevronRight" Foreground="{DynamicResource SubtleTextBrush}"
+                                      FontSize="9" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CurrentPageLabel"
+                                   Text="Dashboard"
+                                   Foreground="{DynamicResource SubtleTextBrush}"
+                                   FontFamily="{DynamicResource PrimaryFont}"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Controls: bell + camera + window buttons -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Margin="0,0,6,0">
+
+                        <!-- Signed-in user + lock/sign-out (RBAC) -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,4,0">
+                            <fa:IconBlock Icon="User" Foreground="{DynamicResource AccentBrush}"
+                                          FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <StackPanel VerticalAlignment="Center" Margin="0,0,6,0">
+                                <TextBlock x:Name="SessionUserText" Text=""
+                                           Foreground="{DynamicResource TextBrush}" FontSize="11" FontWeight="SemiBold"
+                                           FontFamily="{DynamicResource PrimaryFont}"/>
+                                <TextBlock x:Name="SessionRoleText" Text=""
+                                           Foreground="{DynamicResource SubtleTextBrush}" FontSize="9"
+                                           FontFamily="{DynamicResource PrimaryFont}"/>
+                            </StackPanel>
+                            <Button x:Name="LogoutButton" Click="LogoutButton_Click"
+                                    Style="{StaticResource TitleBarButton}" ToolTip="Lock / sign out">
+                                <fa:IconBlock Icon="ArrowRightFromBracket"
+                                              Foreground="{DynamicResource SubtleTextBrush}" FontSize="11"/>
+                            </Button>
+                        </StackPanel>
+                        <Border Width="1" Height="14" Background="{DynamicResource BorderBrush}"
+                                Margin="2,0" VerticalAlignment="Center"/>
+
+                        <!-- Notification bell with unread badge -->
+                        <Grid Margin="0,0,2,0">
+                            <Button x:Name="NotificationButton"
+                                    Style="{StaticResource TitleBarButton}"
+                                    Click="NotificationButton_Click"
+                                    ToolTip="Notifications">
+                                <fa:IconBlock Icon="Bell"
+                                              Foreground="{DynamicResource SubtleTextBrush}"
+                                              FontSize="11"/>
+                            </Button>
+                            <Border x:Name="NotificationBadge"
+                                    Width="15" Height="15"
+                                    CornerRadius="8"
+                                    Background="{DynamicResource CriticalBrush}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,3,3,0"
+                                    Visibility="Collapsed"
+                                    Panel.ZIndex="1">
+                                <TextBlock x:Name="NotificationBadgeText"
+                                           Text="0"
+                                           Foreground="White"
+                                           FontSize="7"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{DynamicResource PrimaryFont}"/>
+                            </Border>
+                        </Grid>
+
+                        <Button x:Name="CameraButton" Click="CameraButton_Click"
+                                Style="{StaticResource TitleBarButton}"
+                                ToolTip="Take screenshot">
+                            <fa:IconBlock Icon="Camera" Foreground="{DynamicResource SubtleTextBrush}" FontSize="11"/>
+                        </Button>
+                        <Border Width="1" Height="14" Background="{DynamicResource BorderBrush}"
+                                Margin="2,0" VerticalAlignment="Center"/>
+                        <Button x:Name="MinimizeButton" Click="MinimizeButton_Click"
+                                Style="{StaticResource TitleBarButton}" ToolTip="Minimize">
+                            <fa:IconBlock Icon="WindowMinimize" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10"/>
+                        </Button>
+                        <Button x:Name="MaximizeButton" Click="MaximizeButton_Click"
+                                Style="{StaticResource TitleBarButton}" ToolTip="Maximize">
+                            <fa:IconBlock Icon="WindowMaximize" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10"/>
+                        </Button>
+                        <Button x:Name="CloseButton" Click="CloseButton_Click"
+                                Style="{StaticResource CloseButtonStyle}" ToolTip="Close">
+                            <fa:IconBlock Icon="Xmark" Foreground="{DynamicResource SubtleTextBrush}" FontSize="12"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 MAIN AREA: Sidebar | Content | Chat
+            ═══════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="NavPanelColumn"    Width="220"/>
+                    <ColumnDefinition x:Name="ContentColumn"     Width="*"/>
+                    <ColumnDefinition x:Name="ChatHandleColumn"  Width="22"/>
+                    <ColumnDefinition x:Name="ChatPanelColumn"   Width="280"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- ─── SIDEBAR ───────────────────────────────────────── -->
+                <Border Grid.Column="0"
+                        Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,0,1,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Sidebar header with collapse button -->
+                        <Border Grid.Row="0"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="0,0,0,1"
+                                Padding="10,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- App name (hides on collapse) -->
+                                <StackPanel VerticalAlignment="Center"
+                                            Visibility="{Binding ElementName=NavPanelColumn,
+                                                         Path=Width.Value,
+                                                         Converter={StaticResource WidthToVisibilityConverter}}">
+                                    <TextBlock Text="PrivaCore"
+                                               Foreground="{DynamicResource TextBrush}"
+                                               FontFamily="{DynamicResource PrimaryFont}"
+                                               FontSize="13" FontWeight="Bold"/>
+                                    <TextBlock Text="Security Platform"
+                                               Foreground="{DynamicResource SubtleTextBrush}"
+                                               FontFamily="{DynamicResource PrimaryFont}"
+                                               FontSize="10" Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <!-- Collapse button -->
+                                <Button x:Name="CollapseButton"
+                                        Grid.Column="1"
+                                        Width="32" Height="32"
+                                        Style="{StaticResource TitleBarButton}"
+                                        Click="CollapseButton_Click"
+                                        ToolTip="Toggle sidebar">
+                                    <fa:IconBlock x:Name="SidebarToggleIcon"
+                                                  Icon="AngleLeft"
+                                                  Foreground="{DynamicResource SubtleTextBrush}"
+                                                  FontSize="14"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <!-- Nav items -->
+                        <ScrollViewer Grid.Row="1"
+                                      VerticalScrollBarVisibility="Hidden"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel x:Name="NavItemsPanel" Margin="0,8,0,8">
+
+                                <!-- ── OVERVIEW ── -->
+                                <Button x:Name="DashboardButton"
+                                        Content="Dashboard"
+                                        Style="{StaticResource NavButtonStyle}"
+                                        Click="NavigationButton_Click">
+                                    <Button.Tag>
+                                        <fa:IconBlock Icon="TableCellsLarge"
+                                                      Foreground="{DynamicResource AccentBrush}"
+                                                      FontSize="15"/>
+                                    </Button.Tag>
+                                </Button>
+
+                                <!-- ── BUILT-IN TOOLS (run locally, always available) ── -->
+                                <TextBlock Text="TOOLS" Style="{StaticResource NavSectionLabel}"/>
+
+                                <Button Content="Port Scanner" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
+                                    <Button.Tag><fa:IconBlock Icon="MagnifyingGlass" Foreground="{DynamicResource AccentBrush}" FontSize="15"/></Button.Tag>
+                                </Button>
+                                <Button Content="Vulnerability Scanner" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
+                                    <Button.Tag><fa:IconBlock Icon="Bug" Foreground="{DynamicResource WarningBrush}" FontSize="15"/></Button.Tag>
+                                </Button>
+                                <Button Content="Network Discovery" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
+                                    <Button.Tag><fa:IconBlock Icon="Sitemap" Foreground="{DynamicResource AccentBrush}" FontSize="15"/></Button.Tag>
+                                </Button>
+                                <Button Content="Network Topology" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
+                                    <Button.Tag><fa:IconBlock Icon="Server" Foreground="{DynamicResource AccentBrush}" FontSize="15"/></Button.Tag>
+                                </Button>
+                                <Button Content="Traffic Analysis" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
+                                    <Button.Tag><fa:IconBlock Icon="ChartLine" Foreground="{DynamicResource AccentBrush}" FontSize="15"/></Button.Tag>
+                                </Button>
+                                <Button Content="POC Explorer" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
+                                    <Button.Tag><fa:IconBlock Icon="SkullCrossbones" Foreground="{DynamicResource CriticalBrush}" FontSize="15"/></Button.Tag>
+                                </Button>
+                                <Button Content="Honeypot" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
+                                    <Button.Tag><fa:IconBlock Icon="Eye" Foreground="{DynamicResource AccentBrush}" FontSize="15"/></Button.Tag>
+                                </Button>
+
+                                <!-- ── MODULES (remote; added via Add Module) ── -->
+                                <TextBlock Text="REMOTE MODULES" Style="{StaticResource NavSectionLabel}"/>
+
+                                <ItemsControl x:Name="ModuleNavList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource NavButtonStyle}"
+                                                    Click="ModuleNav_Click"
+                                                    ToolTip="Right-click to remove">
+                                                <Button.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Remove module" Click="RemoveModule_Click"/>
+                                                    </ContextMenu>
+                                                </Button.ContextMenu>
+                                                <Button.Tag>
+                                                    <fa:IconBlock Icon="{Binding Icon}"
+                                                                  Foreground="{DynamicResource AccentBrush}"
+                                                                  FontSize="15"/>
+                                                </Button.Tag>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <Button x:Name="AddModuleButton"
+                                        Content="Add Module"
+                                        Style="{StaticResource NavButtonStyle}"
+                                        Click="AddModule_Click">
+                                    <Button.Tag>
+                                        <fa:IconBlock Icon="Plus"
+                                                      Foreground="{DynamicResource SuccessBrush}"
+                                                      FontSize="15"/>
+                                    </Button.Tag>
+                                </Button>
+
+                                <!-- ── WORKSPACE ── -->
+                                <TextBlock Text="WORKSPACE" Style="{StaticResource NavSectionLabel}"/>
+
+                                <Button x:Name="AchievementsButton"
+                                        Content="Achievements"
+                                        Style="{StaticResource NavButtonStyle}"
+                                        Click="NavigationButton_Click">
+                                    <Button.Tag>
+                                        <fa:IconBlock Icon="Trophy"
+                                                      Foreground="{DynamicResource WarningBrush}"
+                                                      FontSize="15"/>
+                                    </Button.Tag>
+                                </Button>
+
+                                <Button x:Name="GalleryButton"
+                                        Content="Gallery"
+                                        Style="{StaticResource NavButtonStyle}"
+                                        Click="NavigationButton_Click">
+                                    <Button.Tag>
+                                        <fa:IconBlock Icon="Image"
+                                                      Foreground="{DynamicResource AccentBrush}"
+                                                      FontSize="15"/>
+                                    </Button.Tag>
+                                </Button>
+
+                                <!-- ── ADMIN (whole section hidden without ManageUsers) ── -->
+                                <StackPanel x:Name="AdminNavSection">
+                                    <TextBlock Text="ADMIN" Style="{StaticResource NavSectionLabel}"/>
+                                    <Button x:Name="UserManagementButton"
+                                            Content="User Management"
+                                            Style="{StaticResource NavButtonStyle}"
+                                            Click="NavigationButton_Click">
+                                        <Button.Tag>
+                                            <fa:IconBlock Icon="Users"
+                                                          Foreground="{DynamicResource AccentBrush}"
+                                                          FontSize="15"/>
+                                        </Button.Tag>
+                                    </Button>
+                                </StackPanel>
+
+                                <!-- Divider before settings -->
+                                <Border Height="1" Margin="14,8"
+                                        Background="{DynamicResource BorderBrush}" Opacity="0.6"/>
+
+                                <Button x:Name="SettingsButton"
+                                        Content="Settings"
+                                        Style="{StaticResource NavButtonStyle}"
+                                        Click="NavigationButton_Click">
+                                    <Button.Tag>
+                                        <fa:IconBlock Icon="Gear"
+                                                      Foreground="{DynamicResource SubtleTextBrush}"
+                                                      FontSize="15"/>
+                                    </Button.Tag>
+                                </Button>
+
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- Profile (bottom) -->
+                        <Border Grid.Row="2"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="0,1,0,0"
+                                Background="{DynamicResource SecondaryBackgroundBrush}"
+                                Padding="6,6">
+                            <Button x:Name="ProfileButton"
+                                    Click="ProfileButton_Click"
+                                    Style="{StaticResource NavButtonStyle}"
+                                    Height="52" Margin="0"
+                                    ToolTip="View profile">
+                                <Button.Tag>
+                                    <Border Width="30" Height="30" CornerRadius="15"
+                                            Background="{DynamicResource AccentBrush}">
+                                        <fa:IconBlock Icon="User" Foreground="White" FontSize="13"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </Button.Tag>
+                                <Button.Content>
+                                    <StackPanel Margin="2,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock x:Name="UserNameText"
+                                                   Text="My Profile"
+                                                   Foreground="{DynamicResource TextBrush}"
+                                                   FontFamily="{DynamicResource PrimaryFont}"
+                                                   FontSize="13" FontWeight="SemiBold"/>
+                                        <TextBlock Text="View account →"
+                                                   Foreground="{DynamicResource SubtleTextBrush}"
+                                                   FontFamily="{DynamicResource PrimaryFont}"
+                                                   FontSize="10" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- ─── CONTENT AREA ───────────────────────────────────── -->
+                <Border Grid.Column="1" Background="{DynamicResource BackgroundBrush}">
+                    <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+                </Border>
+
+                <!-- ─── CHAT HANDLE ── always-visible toggle strip ───────── -->
+                <Border x:Name="ChatHandleBorder"
+                        Grid.Column="2"
+                        Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1,0,0,0"
+                        Cursor="Hand"
+                        MouseLeftButtonDown="ChatHandle_MouseDown"
+                        ToolTip="Toggle AI Assistant">
+                    <fa:IconBlock x:Name="ChatHandleIcon"
+                                  Icon="ChevronLeft"
+                                  Foreground="{DynamicResource SubtleTextBrush}"
+                                  FontSize="8"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  IsHitTestVisible="False"
+                                  RenderTransformOrigin="0.5,0.5">
+                        <fa:IconBlock.RenderTransform>
+                            <RotateTransform x:Name="ChatHandleRotation" Angle="0"/>
+                        </fa:IconBlock.RenderTransform>
+                    </fa:IconBlock>
+                </Border>
+
+                <!-- ─── CHAT PANEL ─────────────────────────────────────── -->
+                <Border x:Name="ChatBorder"
+                        Grid.Column="3"
+                        Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,0,0,0">
+                    <DockPanel>
+
+                        <!-- Chat header -->
+                        <Border DockPanel.Dock="Top" Height="52"
+                                Background="{DynamicResource AccentBrush}">
+                            <Grid Margin="14,0">
+                                <StackPanel x:Name="ChatHeaderContent"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center">
+                                    <Border x:Name="AiLogoRing"
+                                            Width="30" Height="30" CornerRadius="15"
+                                            Background="#33FFFFFF" Margin="0,0,8,0">
+                                        <fa:IconBlock x:Name="AiLogoIcon"
+                                                      Icon="Robot" Foreground="White" FontSize="14"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock x:Name="AiProviderName"
+                                                   Text="AI Assistant"
+                                                   Foreground="White" FontWeight="SemiBold" FontSize="13"
+                                                   FontFamily="{DynamicResource PrimaryFont}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="6" Height="6"
+                                                     Fill="{DynamicResource SuccessBrush}"
+                                                     Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="AiModelLabel"
+                                                       Text="GPT-3.5"
+                                                       Foreground="#CCFFFFFF"
+                                                       FontFamily="{DynamicResource PrimaryFont}"
+                                                       FontSize="10" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Messages + input -->
+                        <Grid x:Name="ChatContentContainer">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Border x:Name="MessagesContainer" Grid.Row="0"
+                                    Background="{DynamicResource SecondaryBackgroundBrush}">
+                                <ScrollViewer x:Name="ChatScroller"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl x:Name="ChatMessages" Margin="8,8">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource ChatMessageContainer}"
+                                                        Background="{Binding IsUser, Converter={StaticResource MessageBackgroundConverter}}"
+                                                        HorizontalAlignment="{Binding IsUser, Converter={StaticResource MessageAlignmentConverter}}">
+                                                    <TextBlock Text="{Binding Message}"
+                                                               Foreground="{Binding IsUser, Converter={StaticResource MessageForegroundConverter}}"
+                                                               FontFamily="{DynamicResource PrimaryFont}"
+                                                               FontSize="{DynamicResource FontSizeNormal}"
+                                                               TextWrapping="Wrap"
+                                                               MaxWidth="190"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Border>
+
+                            <!-- Input area -->
+                            <Border x:Name="InputContainer"
+                                    Grid.Row="1"
+                                    Background="{DynamicResource BackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,1,0,0"
+                                    Padding="10,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Background="{DynamicResource HoverBrush}"
+                                            CornerRadius="{DynamicResource CornerRadiusNormal}"
+                                            Margin="0,0,8,0">
+                                        <TextBox x:Name="MessageInput"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"
+                                                 Foreground="{DynamicResource TextBrush}"
+                                                 CaretBrush="{DynamicResource AccentBrush}"
+                                                 VerticalContentAlignment="Center"
+                                                 Padding="{DynamicResource InputPadding}"
+                                                 Height="36"
+                                                 FontFamily="{DynamicResource PrimaryFont}"
+                                                 FontSize="{DynamicResource FontSizeNormal}"
+                                                 KeyDown="MessageInput_KeyDown"
+                                                 MaxLength="500"/>
+                                    </Border>
+
+                                    <Button Grid.Column="1"
+                                            Style="{StaticResource ChatButtonStyle}"
+                                            Click="SendMessage_Click"
+                                            Width="36" Height="36">
+                                        <fa:IconBlock Icon="PaperPlane" Foreground="White" FontSize="13"/>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+
+                <!-- Notification panel overlay (shown when bell is clicked) -->
+                <Border x:Name="NotificationPanel"
+                        Grid.Column="0" Grid.ColumnSpan="4"
+                        Panel.ZIndex="998"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Width="340"
+                        MaxHeight="480"
+                        Margin="0,4,14,0"
+                        Visibility="Collapsed"
+                        Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource CornerRadiusLarge}">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.4" Color="Black"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Header -->
+                        <Border Grid.Row="0"
+                                Background="{DynamicResource BackgroundBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="0,0,0,1"
+                                Padding="14,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <fa:IconBlock Icon="Bell"
+                                                  Foreground="{DynamicResource AccentBrush}"
+                                                  FontSize="12" Margin="0,0,8,0"
+                                                  VerticalAlignment="Center"/>
+                                    <TextBlock Text="Notifications"
+                                               Foreground="{DynamicResource TextBrush}"
+                                               FontFamily="{DynamicResource PrimaryFont}"
+                                               FontSize="{DynamicResource FontSizeNormal}"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        x:Name="MarkAllReadButton"
+                                        Click="MarkAllReadButton_Click"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Padding="6,3"
+                                        ToolTip="Mark all as read">
+                                    <TextBlock Text="Mark read"
+                                               Foreground="{DynamicResource SubtleTextBrush}"
+                                               FontFamily="{DynamicResource PrimaryFont}"
+                                               FontSize="10"/>
+                                </Button>
+                                <Button Grid.Column="2"
+                                        x:Name="ClearNotificationsButton"
+                                        Click="ClearNotificationsButton_Click"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Padding="6,3"
+                                        Margin="4,0,0,0"
+                                        ToolTip="Clear all">
+                                    <fa:IconBlock Icon="Trash"
+                                                  Foreground="{DynamicResource SubtleTextBrush}"
+                                                  FontSize="10"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <!-- Notification list -->
+                        <ScrollViewer Grid.Row="1"
+                                      VerticalScrollBarVisibility="Auto"
+                                      MaxHeight="380">
+                            <StackPanel>
+                                <ItemsControl x:Name="NotificationsList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{DynamicResource BackgroundBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,0,0,1"
+                                                    Padding="14,10">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <!-- Color dot -->
+                                                    <Ellipse Grid.Column="0"
+                                                             Width="8" Height="8"
+                                                             Margin="0,0,10,0"
+                                                             VerticalAlignment="Top"
+                                                             Fill="{DynamicResource AccentBrush}"/>
+                                                    <!-- Content -->
+                                                    <StackPanel Grid.Column="1">
+                                                        <TextBlock Text="{Binding Title}"
+                                                                   Foreground="{DynamicResource TextBrush}"
+                                                                   FontFamily="{DynamicResource PrimaryFont}"
+                                                                   FontWeight="SemiBold"
+                                                                   FontSize="{DynamicResource FontSizeNormal}"/>
+                                                        <TextBlock Text="{Binding Message}"
+                                                                   Foreground="{DynamicResource SubtleTextBrush}"
+                                                                   FontFamily="{DynamicResource PrimaryFont}"
+                                                                   FontSize="10"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                    <!-- Time -->
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="{Binding TimeAgo}"
+                                                               Foreground="{DynamicResource SubtleTextBrush}"
+                                                               FontFamily="{DynamicResource PrimaryFont}"
+                                                               FontSize="10"
+                                                               VerticalAlignment="Top"
+                                                               Margin="8,0,0,0"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Empty state -->
+                                <Border x:Name="NoNotificationsText"
+                                        Padding="14,24"
+                                        Visibility="Visible">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <fa:IconBlock Icon="BellSlash"
+                                                      Foreground="{DynamicResource SubtleTextBrush}"
+                                                      FontSize="24"
+                                                      HorizontalAlignment="Center"
+                                                      Margin="0,0,0,8"/>
+                                        <TextBlock Text="No notifications yet"
+                                                   Foreground="{DynamicResource SubtleTextBrush}"
+                                                   FontFamily="{DynamicResource PrimaryFont}"
+                                                   FontSize="{DynamicResource FontSizeNormal}"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- Click-outside overlay to close notification panel -->
+                <Border x:Name="NotificationDismissOverlay"
+                        Grid.Column="0" Grid.ColumnSpan="4"
+                        Panel.ZIndex="997"
+                        Background="Transparent"
+                        Visibility="Collapsed"
+                        MouseLeftButtonDown="NotificationDismissOverlay_Click"/>
+
+            </Grid>
+
+        <!-- ─── IN-WINDOW TOAST OVERLAY ─── bottom-right, above everything ─── -->
+        <ItemsControl x:Name="ToastContainer"
+                      Grid.Row="1"
+                      Panel.ZIndex="1001"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom"
+                      Margin="0,0,14,14"
+                      IsHitTestVisible="True">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Bottom"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <!-- Hidden stubs kept for XAML binding compatibility -->
+        <Grid Visibility="Collapsed">
+            <ComboBox x:Name="InterfaceSelector" SelectionChanged="InterfaceSelector_SelectionChanged"/>
+            <TextBlock x:Name="StatusText"/>
+            <TextBlock x:Name="ConnectionStatus"/>
+            <TextBlock x:Name="VersionInfo"/>
+        </Grid>
+        </Grid>
+    </Border>
+</Window>

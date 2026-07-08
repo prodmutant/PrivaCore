@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    PrivaCore.Agent — a lightweight, CROSS-PLATFORM (Windows / Linux / macOS) log-shipping
+    agent. Deploy it on any monitored machine, point it at the SIEM collector (ip/port +
+    credentials + pairing code), tell it which logs to ship, and it forwards normalised
+    events to the collector over the shared module channel (PrivaCore.ModuleSdk).
+
+    Pure net8.0 console (no WPF) so it runs anywhere .NET 8 runs. Publish self-contained,
+    e.g.  dotnet publish -c Release -r linux-x64 (or win-x64 / osx-x64) self-contained.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>privacore-agent</AssemblyName>
+    <RootNamespace>PrivaCore.Agent</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PrivaCore.ModuleSdk\PrivaCore.ModuleSdk.csproj" />
+    <!-- DPAPI for at-rest secret encryption on Windows; no-ops off-Windows (AES key-file fallback). -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.0" />
+  </ItemGroup>
+
+  <!-- Reuse the exact SiemEvent wire shape from the main app (plain POCO, no WPF deps). -->
+  <ItemGroup>
+    <Compile Include="..\PROSCANNERCONT\Models\SiemEvent.cs" Link="_Linked\SiemEvent.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,645 @@
+﻿<Page x:Class="PROSCANNERCONT.Views.NetworkDiscoveryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+      Background="{DynamicResource BackgroundBrush}"
+      Title="Network Discovery"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+      Width="Auto"
+      Height="Auto"
+      MinWidth="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth}"
+      MinHeight="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualHeight}">
+
+
+    <Page.Resources>
+
+        <!-- Styled Expander: replaces the default ugly arrow with a FontAwesome chevron -->
+        <Style x:Key="ModernExpander" TargetType="Expander">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <StackPanel>
+                            <Border x:Name="HeaderBorder"
+                                    Background="{DynamicResource HoverBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Cursor="Hand">
+                                <ToggleButton x:Name="HeaderToggle"
+                                              IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              Padding="12,10"
+                                              HorizontalContentAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter ContentSource="Header"
+                                                          RecognizesAccessKey="True"
+                                                          VerticalAlignment="Center"/>
+                                        <fa:IconBlock x:Name="ExpandIcon"
+                                                      Grid.Column="1"
+                                                      Icon="ChevronDown"
+                                                      FontSize="12"
+                                                      Foreground="{DynamicResource SubtleTextBrush}"
+                                                      VerticalAlignment="Center"
+                                                      RenderTransformOrigin="0.5,0.5">
+                                            <fa:IconBlock.RenderTransform>
+                                                <RotateTransform x:Name="ChevronRotation" Angle="0"/>
+                                            </fa:IconBlock.RenderTransform>
+                                        </fa:IconBlock>
+                                    </Grid>
+                                </ToggleButton>
+                            </Border>
+                            <ContentPresenter x:Name="ExpandContent"
+                                              Visibility="Collapsed"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ExpandContent" Property="Visibility" Value="Visible"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ChevronRotation"
+                                                             Storyboard.TargetProperty="Angle"
+                                                             To="180" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ChevronRotation"
+                                                             Storyboard.TargetProperty="Angle"
+                                                             To="0" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Enhanced DataGrid Style for Network Discovery -->
+        <Style x:Key="NetworkDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource DataGridStyle}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="RowBackground" Value="Transparent"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource HoverBrush}"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="RowHeight" Value="40"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
+            <Setter Property="ColumnHeaderStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Height" Value="36"/>
+                        <Setter Property="Padding" Value="10,0"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                        <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
+                        <Setter Property="FontSize" Value="11"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RowStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                        <Setter Property="Margin" Value="0,0"/>
+                        <Style.Triggers>
+                            <Trigger Property="AlternationIndex" Value="1">
+                                <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="CellStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="DataGridCell">
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                        <ContentPresenter VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Enhanced Button Styles -->
+        <Style x:Key="ActionButton" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- Enhanced TextBox Style -->
+        <Style x:Key="NetworkTextBox" TargetType="TextBox" BasedOn="{StaticResource TextBoxBase}">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Network Discovery" 
+                      Foreground="{DynamicResource TextBrush}" 
+                      FontSize="24" 
+                      FontWeight="SemiBold"/>
+
+            <StackPanel Grid.Column="1" 
+                       Orientation="Horizontal" 
+                       VerticalAlignment="Center">
+                <Border Background="{DynamicResource AccentBrush}"
+                        CornerRadius="4"
+                        Padding="12,6">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Desktop"
+                                      Foreground="White"
+                                      Width="16"
+                                      Height="16"
+                                      Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding ActiveDeviceCount}"
+                                 Foreground="White"
+                                 FontWeight="SemiBold"/>
+                        <TextBlock Text=" devices"
+                                 Foreground="White"
+                                 Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Margin="12,0,0,0"
+                        Padding="12,6">
+                    <TextBlock Text="{Binding CurrentIP}"
+                             Foreground="{DynamicResource TextBrush}"/>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2" Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Scan Results -->
+            <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Margin="0,0,20,0">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Border Background="{DynamicResource SuccessBrush}"
+                                    Width="32"
+                                    Height="32"
+                                    CornerRadius="16">
+                                <fa:IconBlock Icon="Wifi" 
+                                              Foreground="White"
+                                              Width="16"
+                                              Height="16"/>
+                            </Border>
+                            <TextBlock Text="Network Devices"
+                                     Foreground="{DynamicResource TextBrush}"
+                                     FontWeight="SemiBold"
+                                     FontSize="18"
+                                     VerticalAlignment="Center"
+                                     Margin="10,0,0,0"/>
+                        </StackPanel>
+
+                        <!-- Search Box -->
+            
+                    </Grid>
+
+                    <!-- Results Grid — ItemsSource set in code-behind to StateService.NetworkScanResults -->
+                    <DataGrid Grid.Row="1"
+                              x:Name="ScanResultsGrid"
+                              Style="{StaticResource NetworkDataGridStyle}"
+                              Margin="0,15,0,0"
+                              EnableRowVirtualization="True"
+                              EnableColumnVirtualization="True"
+                              VirtualizingPanel.ScrollUnit="Pixel"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              RowDetailsVisibilityMode="Collapsed"
+                              AlternationCount="2">
+
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <fa:IconBlock Icon="Circle"
+                                                      Width="12"
+                                                      Height="12"
+                                                      Margin="4,0">
+                                            <fa:IconBlock.Style>
+                                                <Style TargetType="fa:IconBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsOnline}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                                            <Setter Property="Foreground" Value="{DynamicResource CriticalBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </fa:IconBlock.Style>
+                                        </fa:IconBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="IP ADDRESS" 
+                                              Binding="{Binding IPAddress}" 
+                                              Width="150">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                        <Setter Property="FontWeight" Value="Medium"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridTextColumn Header="HOSTNAME" 
+                                              Binding="{Binding Hostname}" 
+                                              Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridTextColumn Header="MAC ADDRESS" 
+                                              Binding="{Binding MACAddress}" 
+                                              Width="150">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                        <Setter Property="FontFamily" Value="{DynamicResource MonoFont}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridTemplateColumn Header="OS / TYPE" Width="140">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
+                                            <fa:IconBlock Width="14" Height="14" Margin="0,0,7,0" VerticalAlignment="Center">
+                                                <fa:IconBlock.Style>
+                                                    <Style TargetType="fa:IconBlock">
+                                                        <Setter Property="Icon" Value="Question"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding DeviceType}" Value="Windows">
+                                                                <Setter Property="Icon" Value="Windows"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding DeviceType}" Value="Linux">
+                                                                <Setter Property="Icon" Value="Linux"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding DeviceType}" Value="Router">
+                                                                <Setter Property="Icon" Value="NetworkWired"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding DeviceType}" Value="Android">
+                                                                <Setter Property="Icon" Value="MobileScreen"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </fa:IconBlock.Style>
+                                            </fa:IconBlock>
+                                            <TextBlock Text="{Binding OS}"
+                                                       Foreground="{DynamicResource TextBrush}"
+                                                       FontFamily="{DynamicResource PrimaryFont}"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="RESPONSE" Binding="{Binding ResponseDisplay}" Width="90">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="FontFamily" Value="{DynamicResource MonoFont}"/>
+                                        <Setter Property="FontSize" Value="11"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOnline}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                                <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridTextColumn Header="OPEN PORTS" Binding="{Binding OpenPorts}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+                                        <Setter Property="FontFamily" Value="{DynamicResource MonoFont}"/>
+                                        <Setter Property="FontSize" Value="11"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- Scan Options -->
+            <Border Grid.Column="1"
+                    Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Border Background="{DynamicResource AccentBrush}"
+                                Width="32"
+                                Height="32"
+                                CornerRadius="16">
+                            <fa:IconBlock Icon="Gears" 
+                                          Foreground="White"
+                                          Width="16"
+                                          Height="16"/>
+                        </Border>
+                        <TextBlock Text="Scan Options"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 FontWeight="SemiBold"
+                                 FontSize="18"
+                                 VerticalAlignment="Center"
+                                 Margin="10,0,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Margin="0,20,0,0">
+                        <!-- IP Range Input -->
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Network Range" 
+                                     Foreground="{DynamicResource TextBrush}"
+                                     FontSize="14" 
+                                     FontWeight="Medium"
+                                     Margin="0,0,0,5"/>
+
+                            <TextBox x:Name="ScanRangeInput"
+                                     Style="{StaticResource NetworkTextBox}"
+                                     Text="192.168.1.0/24"
+                                     ToolTip="Single IP: 192.168.1.1  |  Range: 192.168.1.1-50  |  CIDR: 192.168.1.0/24"/>
+                        </StackPanel>
+
+                        <!-- Scan Method -->
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Scan Method"
+                                     Foreground="{DynamicResource TextBrush}"
+                                     FontSize="14"
+                                     FontWeight="Medium"
+                                     Margin="0,0,0,5"/>
+
+                            <ComboBox x:Name="ScanTypeComboBox"
+                                     Style="{StaticResource ComboBoxStyle}"
+                                     SelectedIndex="0">
+                                <ComboBoxItem>ARP Scan (Fast)</ComboBoxItem>
+                                <ComboBoxItem>ICMP Scan (Reliable)</ComboBoxItem>
+                                <ComboBoxItem>TCP SYN Scan</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Advanced Options -->
+                        <Expander Style="{StaticResource ModernExpander}" Margin="0,0,0,15">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:IconBlock Icon="Sliders" FontSize="13"
+                                                  Foreground="{DynamicResource AccentBrush}"
+                                                  Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Advanced Options"
+                                               Foreground="{DynamicResource TextBrush}"
+                                               FontSize="14" FontWeight="Medium"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Expander.Header>
+                            <StackPanel Margin="0,10,0,0">
+                                <!-- Timeout Setting -->
+                                <StackPanel Margin="0,0,0,10">
+                                    <TextBlock Text="Timeout (ms)"
+                                             Foreground="{DynamicResource TextBrush}"
+                                             FontSize="12"
+                                             Margin="0,0,0,5"/>
+                                    <TextBox x:Name="TimeoutInput"
+                                            Text="1000"
+                                            Style="{StaticResource NetworkTextBox}"/>
+                                </StackPanel>
+
+                                <!-- FRAGMENTATION -->
+                                <CheckBox Content="Use ICMP Fragmentation Detection"
+                                          x:Name="EnableICMPFragmentation"
+                                          Style="{StaticResource CheckBoxStyle}"
+                                          IsChecked="True"
+                                          Margin="0,5"/>
+
+                                <!-- OS Detection -->
+                                <CheckBox Content="Enable OS Detection"
+                                         x:Name="EnableOSDetection"
+                                         IsChecked="True"
+                                         Style="{StaticResource CheckBoxStyle}"
+                                         Margin="0,5"/>
+
+                                <!-- Continuous Monitoring -->
+                                <CheckBox Content="Continuous Monitoring"
+                                         x:Name="EnableContinuousMonitoring"
+                                         Style="{StaticResource CheckBoxStyle}"
+                                         Margin="0,5"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- Progress Section -->
+                        <Grid Margin="0,10,0,15">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock x:Name="ScanStatus"
+                                     Text="Ready to scan"
+                                     Foreground="{DynamicResource SuccessBrush}"
+                                     FontWeight="SemiBold"
+                                     VerticalAlignment="Center"
+                                     Margin="5"/>
+
+                            <ProgressBar x:Name="ScanProgress"
+                                       Grid.Row="1"
+                                       Height="6"
+                                       Background="{DynamicResource HoverBrush}"
+                                       BorderThickness="0"
+                                       Value="0"
+                                       Foreground="{DynamicResource AccentBrush}"/>
+                        </Grid>
+
+                        <!-- Action Buttons -->
+                        <Button x:Name="StartScanButton"
+                                Click="StartScanButton_Click"
+                                Style="{StaticResource ActionButton}"
+                                Background="{DynamicResource AccentBrush}"
+                                Foreground="White">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:IconBlock Icon="Play"
+                                              Foreground="White"
+                                              Margin="0,0,8,0"/>
+                                <TextBlock Text="Start Scan"
+                                         Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="StopScanButton"
+                                Click="StopScanButton_Click"
+                                Style="{StaticResource ActionButton}"
+                                Background="{DynamicResource CriticalBrush}"
+                                Foreground="White"
+                                IsEnabled="False">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:IconBlock Icon="Stop"
+                                              Foreground="White"
+                                              Margin="0,0,8,0"/>
+                                <TextBlock Text="Stop Scan"
+                                         Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="ClearScanResultsButton"
+                                Click="ClearScanResultsButton_Click"
+                                Style="{StaticResource ActionButton}"
+                                Background="{DynamicResource CriticalBrush}"
+                                Foreground="White">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:IconBlock Icon="Trash"
+                                              Foreground="White"
+                                              Margin="0,0,8,0"/>
+                                <TextBlock Text="Clear Results"
+                                         Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="ExportNetworkCsvButton" Content="Export CSV"
+                                Click="ExportNetworkCsv_Click"
+                                Style="{StaticResource ActionButton}"
+                                Background="{DynamicResource AccentBrush}"
+                                Foreground="White"
+                                ToolTip="Export discovered devices to CSV"/>
+
+                        <Button x:Name="ExportNetworkJsonButton" Content="Export JSON"
+                                Click="ExportNetworkJson_Click"
+                                Style="{StaticResource ActionButton}"
+                                Background="{DynamicResource AccentBrush}"
+                                Foreground="White"
+                                ToolTip="Export discovered devices to JSON"/>
+
+                        <!-- Results Summary -->
+                        <Border x:Name="ScanCompleteBorder"
+                                Background="{DynamicResource SuccessBrush}"
+                                CornerRadius="4"
+                                Padding="10"
+                                Margin="0,15,0,0"
+                                Visibility="Collapsed">
+                            <StackPanel>
+                                <TextBlock Text="Scan Complete"
+                                         Foreground="White"
+                                         FontWeight="SemiBold"
+                                         HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="ScanSummary"
+                                         Foreground="White"
+                                         TextAlignment="Center"
+                                         Margin="0,5,0,0"
+                                         TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

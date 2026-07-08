@@ -1,0 +1,197 @@
+<Page x:Class="PROSCANNERCONT.Views.SiemDashboardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+      xmlns:conv="clr-namespace:PROSCANNERCONT.ValueConverters"
+      Background="{DynamicResource BackgroundBrush}">
+    <Page.Resources>
+        <conv:HexToBrushConverter x:Key="HexToBrush"/>
+
+        <!-- Source toggle chip -->
+        <Style x:Key="Chip" TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+            <Setter Property="Cursor" Value="Hand"/><Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="b" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="6"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse x:Name="dot" Width="7" Height="7" Margin="0,0,6,0" Fill="{DynamicResource SubtleTextBrush}"/>
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dot" Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                <Setter TargetName="b" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Time-range chip -->
+        <Style x:Key="RangeChip" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/><Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/><Setter Property="Height" Value="26"/><Setter Property="Width" Value="42"/>
+            <Setter Property="Template"><Setter.Value>
+                <ControlTemplate TargetType="Button"><Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="5">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="b" Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value></Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ── Header: brand + global search + time range ── -->
+        <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1" Padding="18,12">
+            <DockPanel>
+                <fa:IconBlock DockPanel.Dock="Left" Icon="ChartBar" FontSize="22" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                    <TextBlock Text="PrivaCore SIEM" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Text="Security Information &amp; Event Management" FontSize="11" Foreground="{DynamicResource SubtleTextBrush}"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                    <Button Content="5m"  Tag="5"    Style="{StaticResource RangeChip}" Click="Range_Click"/>
+                    <Button Content="15m" Tag="15"   Style="{StaticResource RangeChip}" Click="Range_Click"/>
+                    <Button Content="1h"  Tag="60"   Style="{StaticResource RangeChip}" Click="Range_Click"/>
+                    <Button Content="24h" Tag="1440" Style="{StaticResource RangeChip}" Click="Range_Click"/>
+                    <Button Content="All" Tag="0"    Style="{StaticResource RangeChip}" Click="Range_Click"/>
+                    <Button x:Name="CustomRangeBtn" Content="⋯" Width="30" Style="{StaticResource RangeChip}" Click="CustomRange_Click" ToolTip="More / custom range"/>
+                    <Button x:Name="RefreshBtn" Content="⟳ 1s" MinWidth="48" Style="{StaticResource RangeChip}" Click="AutoRefresh_Click" ToolTip="Auto-refresh interval"/>
+                </StackPanel>
+
+                <Border Margin="14,0" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,6">
+                    <DockPanel MinWidth="380">
+                        <fa:IconBlock DockPanel.Dock="Left" Icon="MagnifyingGlass" FontSize="13" Foreground="{DynamicResource SubtleTextBrush}" VerticalAlignment="Center" Margin="2,0,8,0"/>
+                        <Button DockPanel.Dock="Right" x:Name="HistoryBtn" Click="History_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="2,0,2,0" ToolTip="Recent searches">
+                            <fa:IconBlock Icon="ClockRotateLeft" FontSize="12" Foreground="{DynamicResource SubtleTextBrush}"/></Button>
+                        <Button DockPanel.Dock="Right" x:Name="ClearSearchBtn" Click="ClearSearch_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Visibility="Collapsed" ToolTip="Clear search">
+                            <fa:IconBlock Icon="Xmark" FontSize="12" Foreground="{DynamicResource SubtleTextBrush}"/></Button>
+                        <Grid>
+                            <TextBox x:Name="SearchBox" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextBrush}"
+                                     FontFamily="Consolas" FontSize="13" VerticalContentAlignment="Center" KeyDown="SearchBox_KeyDown" TextChanged="SearchBox_TextChanged"/>
+                            <TextBlock x:Name="SearchHint" IsHitTestVisible="False" VerticalAlignment="Center" Foreground="{DynamicResource SubtleTextBrush}"
+                                       FontFamily="Consolas" FontSize="13" Opacity="0.55"
+                                       Text="search…  (host:DC01 OR host:WEB02) AND severity:&gt;=high   user.name:adm*   network.bytes&gt;=1000   NOT category:noise"/>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+            </DockPanel>
+        </Border>
+
+        <!-- ── KPI strip (always visible) ── -->
+        <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="18,12">
+            <ItemsControl x:Name="KpiHost">
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Border>
+
+        <!-- ── Tabs ── -->
+        <TabControl Grid.Row="2" x:Name="Tabs" Style="{StaticResource TabControlStyle}" Background="{DynamicResource BackgroundBrush}" Padding="0">
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="ShieldHalved" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Security"/></StackPanel></TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto"><Grid x:Name="SecurityHost" Margin="18"/></ScrollViewer>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="GaugeHigh" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Overview"/></StackPanel></TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0" Margin="18,14,18,0">
+                        <ContentControl x:Name="DashSwitcherHost" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="VisualizeBtn" Content="＋ Visualize" Click="Visualize_Click" Style="{StaticResource AccentButtonStyle}" Height="28" Margin="0,0,6,0" Padding="12,0,12,0"/>
+                            <Button x:Name="AddPanelBtn" Content="＋ Add panel" Click="AddPanel_Click" Style="{StaticResource GhostButtonStyle}" Height="28" Margin="0,0,6,0"/>
+                            <Button x:Name="ShareDashBtn" Content="Share" Click="ShareDashboard_Click" Style="{StaticResource GhostButtonStyle}" Height="28" Margin="0,0,6,0" ToolTip="Export or import this dashboard"/>
+                            <Button Content="Reset" Click="Reset_Click" Style="{StaticResource GhostButtonStyle}" Height="28"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="18,12,18,18">
+                        <WrapPanel x:Name="TilesHost" Orientation="Horizontal"/>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="MagnifyingGlass" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Search"/></StackPanel></TabItem.Header>
+                <Grid x:Name="SearchHost" Margin="0"/>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="Server" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Sources &amp; Agents"/></StackPanel></TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto"><Grid x:Name="SourcesHost" Margin="18"/></ScrollViewer>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="DiagramProject" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Pipeline"/></StackPanel></TabItem.Header>
+                <Grid x:Name="PipelineHost" Margin="18"/>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="Database" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Index"/></StackPanel></TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto"><Grid x:Name="IndexHost" Margin="18"/></ScrollViewer>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="UsersViewfinder" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Entities"/></StackPanel></TabItem.Header>
+                <Grid x:Name="EntitiesHost" Margin="0"/>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="NetworkWired" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Network"/></StackPanel></TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto"><Grid x:Name="NetworkHost" Margin="18"/></ScrollViewer>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="Skull" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Threat Intel"/></StackPanel></TabItem.Header>
+                <Grid x:Name="ThreatIntelHost" Margin="18"/>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Bell" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Alerts" VerticalAlignment="Center"/>
+                        <Border x:Name="AlertsBadge" Background="{DynamicResource CriticalBrush}" CornerRadius="9" MinWidth="18" Height="18"
+                                Margin="7,0,0,0" Padding="5,0,5,0" VerticalAlignment="Center" Visibility="Collapsed">
+                            <TextBlock x:Name="AlertsBadgeText" Text="0" Foreground="White" FontSize="10" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid x:Name="AlertsHost" Margin="0"/>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="Briefcase" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Cases"/></StackPanel></TabItem.Header>
+                <Grid x:Name="CasesHost" Margin="0"/>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="Stream" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Timeline"/></StackPanel></TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto"><Grid x:Name="TimelineHost" Margin="18"/></ScrollViewer>
+            </TabItem>
+
+            <TabItem Style="{StaticResource TabItemStyle}">
+                <TabItem.Header><StackPanel Orientation="Horizontal"><fa:IconBlock Icon="GraduationCap" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Setup Guide"/></StackPanel></TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto"><Grid x:Name="GuideHost" Margin="24"/></ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

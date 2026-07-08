@@ -1,0 +1,91 @@
+<Window x:Class="PROSCANNERCONT.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="PrivaCore IDS — Module" Height="900" Width="1500"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" WindowStyle="None"
+        Background="{DynamicResource BackgroundBrush}">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="36" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Themed title bar -->
+        <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+            <DockPanel>
+                <fa:IconBlock DockPanel.Dock="Left" Icon="Shield" FontSize="13" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="12,0,8,0"/>
+                <TextBlock DockPanel.Dock="Left" Text="PrivaCore IDS — Module" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" FontSize="12" FontWeight="SemiBold"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="&#xE921;" Style="{StaticResource CaptionButtonStyle}" Click="Min_Click" shell:WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Minimize"/>
+                    <Button x:Name="MaxBtn" Content="&#xE922;" Style="{StaticResource CaptionButtonStyle}" Click="Max_Click" shell:WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Maximize"/>
+                    <Button Content="&#xE8BB;" Style="{StaticResource CaptionCloseButtonStyle}" Click="CloseWin_Click" shell:WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Close"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+        <!-- Running: real IDS GUI + module status strip -->
+        <DockPanel x:Name="RunningView" Grid.Row="1" Visibility="Collapsed">
+            <Border DockPanel.Dock="Top" Background="{DynamicResource SecondaryBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="16,10">
+                <DockPanel>
+                    <fa:IconBlock DockPanel.Dock="Left" Icon="Shield" FontSize="16" VerticalAlignment="Center"
+                                  Foreground="{DynamicResource AccentBrush}" Margin="0,0,10,0"/>
+                    <TextBlock DockPanel.Dock="Left" Text="IDS Module" FontWeight="Bold" FontSize="14"
+                               VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}"/>
+                    <Button DockPanel.Dock="Right" x:Name="ReconfigBtn" Content="Reconfigure" Click="Reconfigure_Click"
+                            Style="{StaticResource GhostButtonStyle}" VerticalAlignment="Center"/>
+                    <Button DockPanel.Dock="Right" Content="New pairing code" Click="NewPairing_Click"
+                            Style="{StaticResource GhostButtonStyle}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
+                        <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="9,3" VerticalAlignment="Center" Margin="0,0,12,0">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:IconBlock Icon="Palette" FontSize="11" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock x:Name="ThemeText" VerticalAlignment="Center" Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" Text="Theme: —"/>
+                            </StackPanel>
+                        </Border>
+                        <Ellipse Width="9" Height="9" Fill="{DynamicResource SuccessBrush}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock x:Name="RunStatus" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}"/>
+                        <TextBlock x:Name="ConnInfo" VerticalAlignment="Center" Margin="14,0,0,0" Foreground="{DynamicResource SubtleTextBrush}"/>
+                    </StackPanel>
+                    <TextBlock x:Name="ReachText" Margin="18,0,12,0" VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis" Foreground="{DynamicResource SubtleTextBrush}"/>
+                </DockPanel>
+            </Border>
+            <Frame x:Name="ContentFrame" NavigationUIVisibility="Hidden"/>
+        </DockPanel>
+
+        <!-- Config gate -->
+        <Grid x:Name="ConfigOverlay" Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
+            <Border Style="{StaticResource CardStyle}" Width="460" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="30">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <fa:IconBlock Icon="Shield" FontSize="24" Foreground="{DynamicResource AccentBrush}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="PrivaCore IDS Module" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Text="Configure how the console connects to this sensor." Style="{StaticResource MutedTextStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock Text="Listen port" Style="{StaticResource MutedTextStyle}" Margin="0,14,0,3"/>
+                    <TextBox x:Name="PortBox" Text="9700" Style="{StaticResource InputBoxStyle}"/>
+                    <TextBlock Text="Username" Style="{StaticResource MutedTextStyle}" Margin="0,10,0,3"/>
+                    <TextBox x:Name="UserBox" Text="admin" Style="{StaticResource InputBoxStyle}"/>
+                    <TextBlock Text="Password" Style="{StaticResource MutedTextStyle}" Margin="0,10,0,3"/>
+                    <PasswordBox x:Name="PassBox" Style="{StaticResource PasswordBoxStyle}"/>
+                    <TextBlock Text="Confirm password" Style="{StaticResource MutedTextStyle}" Margin="0,10,0,3"/>
+                    <PasswordBox x:Name="Pass2Box" Style="{StaticResource PasswordBoxStyle}"/>
+                    <TextBlock Text="Pairing code (deployment secret — give this to console operators)" Style="{StaticResource MutedTextStyle}" Margin="0,10,0,3"/>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="Generate" Click="Generate_Click" Style="{StaticResource GhostButtonStyle}" Margin="8,0,0,0"/>
+                        <TextBox x:Name="PairBox" Style="{StaticResource InputBoxStyle}"/>
+                    </DockPanel>
+                    <Button x:Name="SaveStartBtn" Content="Save &amp; Start module" Style="{StaticResource AccentButtonStyle}"
+                            Margin="0,20,0,0" Height="40" Click="SaveStart_Click"/>
+                    <TextBlock x:Name="ErrText" Foreground="{DynamicResource CriticalBrush}" TextWrapping="Wrap" Margin="0,10,0,0" Visibility="Collapsed"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

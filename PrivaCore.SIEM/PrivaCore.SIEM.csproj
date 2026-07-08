@@ -1,0 +1,96 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+	  PrivaCore.SIEM — standalone SIEM collector app. Compiles the SIEM engine + dashboard
+	  from the main project as LINKED SOURCE, so it reuses the exact code/look yet depends on
+	  nothing from the rest of PrivaCore. Deploy self-contained to any Windows machine.
+	-->
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<AssemblyName>privacore-siem</AssemblyName>
+		<RootNamespace>PrivaCore.SIEM</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\PrivaCore.ModuleSdk\PrivaCore.ModuleSdk.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="9.0.3" />
+	</ItemGroup>
+
+	<!-- Reused SIEM source (linked) -->
+	<ItemGroup>
+		<Compile Include="..\PROSCANNERCONT\Models\SiemEvent.cs" Link="_Linked\SiemEvent.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemWidget.cs" Link="_Linked\SiemWidget.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemTreemap.cs" Link="_Linked\SiemTreemap.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemPipeline.cs" Link="_Linked\SiemPipeline.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemGrok.cs" Link="_Linked\SiemGrok.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemRuntimeField.cs" Link="_Linked\SiemRuntimeField.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemSavedSearch.cs" Link="_Linked\SiemSavedSearch.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemRule.cs" Link="_Linked\SiemRule.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemAlert.cs" Link="_Linked\SiemAlert.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemRuleLibrary.cs" Link="_Linked\SiemRuleLibrary.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemIntegrations.cs" Link="_Linked\SiemIntegrations.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemMitre.cs" Link="_Linked\SiemMitre.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemCase.cs" Link="_Linked\SiemCase.cs" />
+		<Compile Include="..\PROSCANNERCONT\Models\SiemTimeline.cs" Link="_Linked\SiemTimeline.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemLayout.cs" Link="_Linked\SiemLayout.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemDashboardStore.cs" Link="_Linked\SiemDashboardStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemIndexSettings.cs" Link="_Linked\SiemIndexSettings.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemPersistence.cs" Link="_Linked\SiemPersistence.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemEntityRisk.cs" Link="_Linked\SiemEntityRisk.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemCaseStore.cs" Link="_Linked\SiemCaseStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemTimelineStore.cs" Link="_Linked\SiemTimelineStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemSavedObjects.cs" Link="_Linked\SiemSavedObjects.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemSavedSearchStore.cs" Link="_Linked\SiemSavedSearchStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemRuleStore.cs" Link="_Linked\SiemRuleStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemRuleEngine.cs" Link="_Linked\SiemRuleEngine.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemWebhook.cs" Link="_Linked\SiemWebhook.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemEmail.cs" Link="_Linked\SiemEmail.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\GeoIpService.cs" Link="_Linked\GeoIpService.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemPipelineStore.cs" Link="_Linked\SiemPipelineStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemPipelineSetStore.cs" Link="_Linked\SiemPipelineSetStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\ISiemStore.cs" Link="_Linked\ISiemStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemStore.cs" Link="_Linked\SiemStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemRange.cs" Link="_Linked\SiemRange.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemQuery.cs" Link="_Linked\SiemQuery.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\Elastic\SiemEsDocument.cs" Link="_Linked\SiemEsDocument.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemQueryApi.cs" Link="_Linked\SiemQueryApi.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemIngestQueue.cs" Link="_Linked\SiemIngestQueue.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemFileTail.cs" Link="_Linked\SiemFileTail.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemIngestion.cs" Link="_Linked\SiemIngestion.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemSyslog.cs" Link="_Linked\SiemSyslog.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemHttpIngest.cs" Link="_Linked\SiemHttpIngest.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemModuleBridge.cs" Link="_Linked\SiemModuleBridge.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemAgentRegistry.cs" Link="_Linked\SiemAgentRegistry.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemWelcome.cs" Link="_Linked\SiemWelcome.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemAudit.cs" Link="_Linked\SiemAudit.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemFieldTypes.cs" Link="_Linked\SiemFieldTypes.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemFieldMappingStore.cs" Link="_Linked\SiemFieldMappingStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemGeoMap.cs" Link="_Linked\SiemGeoMap.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemIndicatorStore.cs" Link="_Linked\SiemIndicatorStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\Siem\SiemRuntimeFieldStore.cs" Link="_Linked\SiemRuntimeFieldStore.cs" />
+		<Compile Include="..\PROSCANNERCONT\Managers\ThemeManager.cs" Link="_Linked\ThemeManager.cs" />
+		<Compile Include="..\PROSCANNERCONT\Services\ModuleThemeSync.cs" Link="_Linked\Services\ModuleThemeSync.cs" />
+		<Compile Include="..\PROSCANNERCONT\ValueConverters\HexToBrushConverter.cs" Link="_Linked\HexToBrushConverter.cs" />
+		<Compile Include="..\PROSCANNERCONT\Converters\InverseBooleanToVisibilityConverter.cs" Link="_Linked\InverseBooleanToVisibilityConverter.cs" />
+		<Page Include="..\PROSCANNERCONT\Views\SiemDashboardPage.xaml" Link="_Linked\Views\SiemDashboardPage.xaml" />
+		<Compile Include="..\PROSCANNERCONT\Views\SiemDashboardPage.xaml.cs" Link="_Linked\Views\SiemDashboardPage.xaml.cs" />
+		<Page Include="..\PROSCANNERCONT\Views\PairingCodeDialog.xaml" Link="_Linked\Views\PairingCodeDialog.xaml" />
+		<Compile Include="..\PROSCANNERCONT\Views\PairingCodeDialog.xaml.cs" Link="_Linked\Views\PairingCodeDialog.xaml.cs" />
+		<Compile Include="..\PROSCANNERCONT\Views\ModuleCredentialsDialog.cs" Link="_Linked\Views\ModuleCredentialsDialog.cs" />
+		<Compile Include="..\PROSCANNERCONT\Views\PipelineStageDialog.cs" Link="_Linked\Views\PipelineStageDialog.cs" />
+		<Compile Include="..\PROSCANNERCONT\Views\TextPromptDialog.cs" Link="_Linked\Views\TextPromptDialog.cs" />
+		<Compile Include="..\PROSCANNERCONT\Views\SiemRuleDialog.cs" Link="_Linked\Views\SiemRuleDialog.cs" />
+		<Compile Include="..\PROSCANNERCONT\Views\SiemVizDialog.cs" Link="_Linked\Views\SiemVizDialog.cs" />
+		<Compile Include="..\PROSCANNERCONT\Views\SiemCaseDialog.cs" Link="_Linked\Views\SiemCaseDialog.cs" />
+		<Compile Include="..\PROSCANNERCONT\Views\SiemAgentPolicyDialog.cs" Link="_Linked\Views\SiemAgentPolicyDialog.cs" />
+	</ItemGroup>
+
+</Project>

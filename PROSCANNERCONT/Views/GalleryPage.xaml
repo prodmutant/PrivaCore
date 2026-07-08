@@ -1,0 +1,419 @@
+﻿<Page x:Class="PROSCANNERCONT.Views.GalleryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+      Title="Gallery">
+
+    <Page.Resources>
+        <!-- Converters -->
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <!-- Effects -->
+        <DropShadowEffect x:Key="DropShadowEffect" Color="Black" Direction="270" ShadowDepth="2" BlurRadius="8" Opacity="0.1"/>
+
+        <!-- Styles -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource HoverBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FilterButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource HoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GalleryCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" 
+                                    Direction="270" 
+                                    ShadowDepth="2" 
+                                    BlurRadius="8" 
+                                    Opacity="0.1"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="EmptyStateStyle" TargetType="StackPanel">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="50"/>
+        </Style>
+
+        <!-- Data Templates -->
+        <DataTemplate x:Key="GalleryItemTemplate">
+            <Border Style="{StaticResource GalleryCardStyle}"
+                    MouseLeftButtonUp="GalleryCard_Click"
+                    Tag="{Binding}">
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="MouseEnter">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                               To="1.05" Duration="0:0:0.2"/>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                               To="1.05" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="MouseLeave">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                               To="1.0" Duration="0:0:0.2"/>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                               To="1.0" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Border.Triggers>
+                <Border.RenderTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Border.RenderTransform>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="160"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Screenshot Preview -->
+                    <Border Grid.Row="0" 
+                            Background="{DynamicResource BackgroundBrush}"
+                            CornerRadius="6,6,0,0"
+                            ClipToBounds="True">
+                        <Grid>
+                            <Image Source="{Binding Screenshot}"
+                                   Stretch="UniformToFill"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                            <!-- Overlay on hover -->
+                            <Border x:Name="HoverOverlay"
+                                    Background="{DynamicResource OverlayBackgroundBrush}"
+                                    Opacity="0"
+                                    CornerRadius="6,6,0,0">
+                                <fa:IconBlock Icon="MagnifyingGlass"
+                                              Foreground="{DynamicResource OnAccentBrush}"
+                                              FontSize="24"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                <Border.Triggers>
+                                    <EventTrigger RoutedEvent="MouseEnter">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                               To="1" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="MouseLeave">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                               To="0" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Border.Triggers>
+                            </Border>
+
+                            <!-- Type Badge -->
+                            <Border Background="{DynamicResource AccentBrush}"
+                                    CornerRadius="0,0,4,0"
+                                    Padding="6,2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Visibility="{Binding IsManual, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <TextBlock Text="MANUAL"
+                                         Foreground="White"
+                                         FontSize="10"
+                                         FontWeight="Bold"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Screenshot Info -->
+                    <StackPanel Grid.Row="1" 
+                              Margin="12">
+                        <TextBlock Text="{Binding Title}"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 FontWeight="SemiBold"
+                                 FontSize="14"
+                                 TextTrimming="CharacterEllipsis"
+                                 Margin="0,0,0,4"/>
+
+                        <TextBlock Text="{Binding Description}"
+                                 Foreground="{DynamicResource SubtleTextBrush}"
+                                 FontSize="12"
+                                 TextTrimming="CharacterEllipsis"
+                                 Margin="0,0,0,8"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <fa:IconBlock Icon="Clock"
+                                          Width="12"
+                                          Height="12"
+                                          Foreground="{DynamicResource SubtleTextBrush}"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,4,0"/>
+                            <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:MM/dd HH:mm}'}"
+                                     Foreground="{DynamicResource SubtleTextBrush}"
+                                     FontSize="11"
+                                     VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Background="{DynamicResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource SecondaryBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="30,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Title and Stats -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Screenshot Gallery"
+                             Style="{StaticResource HeaderTextStyle}"
+                             Margin="0,0,0,8"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="ItemCountText"
+                                 Text="0 screenshots"
+                                 FontSize="14"
+                                 Foreground="{DynamicResource SubtleTextBrush}"/>
+                        <TextBlock Text=" • "
+                                 FontSize="14"
+                                 Foreground="{DynamicResource SubtleTextBrush}"
+                                 Margin="8,0"/>
+                        <TextBlock x:Name="LastUpdatedText"
+                                 Text="Last updated: Never"
+                                 FontSize="14"
+                                 Foreground="{DynamicResource SubtleTextBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" 
+                          Orientation="Horizontal">
+                    <Button Style="{StaticResource ModernButtonStyle}"
+                            Click="RefreshButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconBlock Icon="ArrowsRotate"
+                                          Foreground="White"
+                                          FontSize="14"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,6,0"/>
+                            <TextBlock Text="Refresh" 
+                                     VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource ModernButtonStyle}"
+                            Background="{DynamicResource CriticalBrush}"
+                            Click="ClearAllButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconBlock Icon="Trash"
+                                          Foreground="White"
+                                          FontSize="14"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,6,0"/>
+                            <TextBlock Text="Clear All" 
+                                     VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Filter Bar -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource SecondaryBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="30,15">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Filter:"
+                         FontSize="14"
+                         FontWeight="Medium"
+                         Foreground="{DynamicResource TextBrush}"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"/>
+
+                <ToggleButton x:Name="AllFilter"
+                            Style="{StaticResource FilterButtonStyle}"
+                            Content="All"
+                            IsChecked="True"
+                            Checked="FilterButton_Checked"/>
+
+                <ToggleButton x:Name="ManualFilter"
+                            Style="{StaticResource FilterButtonStyle}"
+                            Content="Manual"
+                            Checked="FilterButton_Checked"/>
+
+                <ToggleButton x:Name="ScanFilter"
+                            Style="{StaticResource FilterButtonStyle}"
+                            Content="Scan Results"
+                            Checked="FilterButton_Checked"/>
+
+                <ToggleButton x:Name="DashboardFilter"
+                            Style="{StaticResource FilterButtonStyle}"
+                            Content="Dashboard"
+                            Checked="FilterButton_Checked"/>
+
+                <ToggleButton x:Name="SettingsFilter"
+                            Style="{StaticResource FilterButtonStyle}"
+                            Content="Settings"
+                            Checked="FilterButton_Checked"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="20">
+            <Grid>
+                <!-- Screenshot Grid -->
+                <ItemsControl x:Name="GalleryItemsControl"
+                            ItemTemplate="{StaticResource GalleryItemTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <!-- Empty State -->
+                <StackPanel x:Name="EmptyStatePanel"
+                          Style="{StaticResource EmptyStateStyle}"
+                          Visibility="Collapsed">
+                    <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="40,30"
+                            Effect="{StaticResource DropShadowEffect}">
+                        <StackPanel HorizontalAlignment="Center">
+                            <fa:IconBlock Icon="Image"
+                                          FontSize="48"
+                                          Foreground="{DynamicResource SubtleTextBrush}"
+                                          HorizontalAlignment="Center"
+                                          Margin="0,0,0,20"/>
+
+                            <TextBlock Text="No Screenshots Yet"
+                                     FontSize="20"
+                                     FontWeight="SemiBold"
+                                     Foreground="{DynamicResource TextBrush}"
+                                     HorizontalAlignment="Center"
+                                     Margin="0,0,0,8"/>
+
+                            <TextBlock Text="Screenshots you take will appear here automatically"
+                                     FontSize="14"
+                                     Foreground="{DynamicResource SubtleTextBrush}"
+                                     HorizontalAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     MaxWidth="300"
+                                     TextAlignment="Center"
+                                     Margin="0,0,0,20"/>
+
+                            <Button Style="{StaticResource ModernButtonStyle}"
+                                    Click="TakeScreenshotButton_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:IconBlock Icon="Camera"
+                                                  Foreground="White"
+                                                  FontSize="14"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,6,0"/>
+                                    <TextBlock Text="Take Screenshot" 
+                                             VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

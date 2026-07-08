@@ -1,0 +1,214 @@
+<Window x:Class="PROSCANNERCONT.Views.RuleEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Rule Editor" Width="680" Height="620"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource SecondaryBackgroundBrush}" ResizeMode="NoResize"
+        WindowStyle="None" AllowsTransparency="True">
+
+  <Window.Resources>
+    <Style x:Key="F" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="#777"/>
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="FontFamily" Value="Segoe UI"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+    <Style x:Key="I" TargetType="TextBox">
+      <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="8,6"/>
+      <Setter Property="FontFamily" Value="Segoe UI"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="CaretBrush" Value="{DynamicResource AccentBrush}"/>
+    </Style>
+    <Style x:Key="C" TargetType="ComboBox">
+      <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="8,6"/>
+      <Setter Property="FontFamily" Value="Segoe UI"/>
+      <Setter Property="FontSize" Value="12"/>
+    </Style>
+    <Style x:Key="Btn" TargetType="Button">
+      <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="14,7"/>
+      <Setter Property="FontFamily" Value="Segoe UI"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
+
+  <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="44"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- Title bar -->
+      <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="6,6,0,0"
+              MouseLeftButtonDown="TitleBar_MouseDown">
+        <Grid Margin="16,0">
+          <TextBlock x:Name="TitleText" Text="Add Rule" Foreground="White"
+                     FontSize="13" FontWeight="SemiBold" FontFamily="Segoe UI"
+                     VerticalAlignment="Center"/>
+          <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Center"
+                  Click="Cancel_Click" Style="{StaticResource Btn}"
+                  Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource SubtleTextBrush}" FontSize="14" Padding="8,4"/>
+        </Grid>
+      </Border>
+
+      <!-- Content -->
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20,16,20,0">
+        <StackPanel>
+
+          <!-- Identity -->
+          <TextBlock Text="IDENTITY" Style="{StaticResource F}" Margin="0,0,0,10"/>
+          <Grid Margin="0,0,0,14">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <StackPanel>
+              <TextBlock Text="RULE ID" Style="{StaticResource F}"/>
+              <TextBox x:Name="RuleIdBox" Style="{StaticResource I}" FontFamily="Consolas"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="NAME" Style="{StaticResource F}"/>
+              <TextBox x:Name="NameBox" Style="{StaticResource I}"/>
+            </StackPanel>
+          </Grid>
+          <StackPanel Margin="0,0,0,20">
+            <TextBlock Text="DESCRIPTION" Style="{StaticResource F}"/>
+            <TextBox x:Name="DescBox" Style="{StaticResource I}" Height="52"
+                     TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+          </StackPanel>
+
+          <!-- Classification -->
+          <TextBlock Text="CLASSIFICATION" Style="{StaticResource F}" Margin="0,0,0,10"/>
+          <Grid Margin="0,0,0,14">
+            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition/></Grid.ColumnDefinitions>
+            <StackPanel>
+              <TextBlock Text="SEVERITY" Style="{StaticResource F}"/>
+              <ComboBox x:Name="SeverityBox" Style="{StaticResource C}">
+                <ComboBoxItem Content="Critical"/><ComboBoxItem Content="High"/>
+                <ComboBoxItem Content="Medium" IsSelected="True"/><ComboBoxItem Content="Low"/>
+                <ComboBoxItem Content="Info"/>
+              </ComboBox>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="PROTOCOL" Style="{StaticResource F}"/>
+              <ComboBox x:Name="ProtoBox" Style="{StaticResource C}">
+                <ComboBoxItem Content="any" IsSelected="True"/>
+                <ComboBoxItem Content="TCP"/><ComboBoxItem Content="UDP"/>
+                <ComboBoxItem Content="ICMP"/>
+              </ComboBox>
+            </StackPanel>
+            <StackPanel Grid.Column="4">
+              <TextBlock Text="CATEGORY" Style="{StaticResource F}"/>
+              <TextBox x:Name="CategoryBox" Style="{StaticResource I}"/>
+            </StackPanel>
+          </Grid>
+
+          <!-- Network -->
+          <TextBlock Text="NETWORK FILTER" Style="{StaticResource F}" Margin="0,0,0,10"/>
+          <Grid Margin="0,0,0,6">
+            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition Width="140"/></Grid.ColumnDefinitions>
+            <StackPanel>
+              <TextBlock Text="SOURCE IP  (CIDR OK, 'any' = all)" Style="{StaticResource F}"/>
+              <TextBox x:Name="SrcIpBox" Style="{StaticResource I}" Text="any" FontFamily="Consolas"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="SOURCE PORT  (e.g. 80,443 or 1:1024)" Style="{StaticResource F}"/>
+              <TextBox x:Name="SrcPortBox" Style="{StaticResource I}" Text="any" FontFamily="Consolas"/>
+            </StackPanel>
+          </Grid>
+          <Grid Margin="0,0,0,20">
+            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition Width="140"/></Grid.ColumnDefinitions>
+            <StackPanel>
+              <TextBlock Text="DESTINATION IP" Style="{StaticResource F}"/>
+              <TextBox x:Name="DstIpBox" Style="{StaticResource I}" Text="any" FontFamily="Consolas"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="DESTINATION PORT" Style="{StaticResource F}"/>
+              <TextBox x:Name="DstPortBox" Style="{StaticResource I}" Text="any" FontFamily="Consolas"/>
+            </StackPanel>
+          </Grid>
+
+          <!-- Payload -->
+          <TextBlock Text="PAYLOAD DETECTION" Style="{StaticResource F}" Margin="0,0,0,10"/>
+          <StackPanel Margin="0,0,0,8">
+            <TextBlock Text="PATTERN  (regex, leave blank to match on headers only)" Style="{StaticResource F}"/>
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <TextBox x:Name="PatternBox" Style="{StaticResource I}" FontFamily="Consolas"/>
+              <Button Grid.Column="2" Content="Test" Style="{StaticResource Btn}"
+                      Click="TestPattern_Click" Padding="12,7"/>
+            </Grid>
+            <TextBlock x:Name="PatternTestResult" Text="" FontSize="10" FontFamily="Segoe UI"
+                       Margin="0,4,0,0" Visibility="Collapsed"/>
+          </StackPanel>
+          <Grid Margin="0,0,0,20">
+            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition/></Grid.ColumnDefinitions>
+            <StackPanel>
+              <TextBlock Text="MIN PACKET SIZE (bytes, 0 = no minimum)" Style="{StaticResource F}"/>
+              <TextBox x:Name="MinSizeBox" Style="{StaticResource I}" Text="0" FontFamily="Consolas"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="MAX PACKET SIZE (bytes, 0 = no maximum)" Style="{StaticResource F}"/>
+              <TextBox x:Name="MaxSizeBox" Style="{StaticResource I}" Text="0" FontFamily="Consolas"/>
+            </StackPanel>
+          </Grid>
+
+          <!-- Flags & Kind -->
+          <TextBlock Text="FLAGS &amp; RULE KIND" Style="{StaticResource F}" Margin="0,0,0,10"/>
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+            <CheckBox x:Name="NullFlagsBox" Content="Require NULL flags (Null scan)" Foreground="#AAA"
+                      FontSize="12" FontFamily="Segoe UI" Margin="0,0,24,0" VerticalContentAlignment="Center"/>
+            <CheckBox x:Name="XmasFlagsBox" Content="Require XMAS flags (XMAS scan)" Foreground="#AAA"
+                      FontSize="12" FontFamily="Segoe UI" Margin="0,0,24,0" VerticalContentAlignment="Center"/>
+            <StackPanel>
+              <TextBlock Text="RULE KIND" Style="{StaticResource F}"/>
+              <ComboBox x:Name="RuleKindBox" Style="{StaticResource C}" Width="140">
+                <ComboBoxItem Content="Signature" IsSelected="True"/>
+                <ComboBoxItem Content="Behavioral"/>
+              </ComboBox>
+            </StackPanel>
+          </StackPanel>
+
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- Footer -->
+      <Border Grid.Row="2" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0"
+              Padding="20,12" CornerRadius="0,0,6,6">
+        <Grid>
+          <TextBlock x:Name="ErrorText" Foreground="{DynamicResource SeverityCriticalBrush}" FontSize="11"
+                     FontFamily="Segoe UI" VerticalAlignment="Center"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel" Style="{StaticResource Btn}" Click="Cancel_Click" Margin="0,0,8,0"/>
+            <Button Content="Save Rule" Style="{StaticResource Btn}" Click="Save_Click"
+                    Background="{DynamicResource SeverityInfoBgBrush}" Foreground="{DynamicResource SeverityInfoBrush}" BorderBrush="{DynamicResource AccentBrush}" Padding="18,7"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Grid>
+  </Border>
+</Window>

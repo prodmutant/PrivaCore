@@ -1,0 +1,229 @@
+<Window x:Class="PROSCANNERCONT.Views.SSHConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Configure SSH Access"
+        Height="450" Width="550"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{DynamicResource SecondaryBackgroundBrush}">
+
+    <Border Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2" CornerRadius="8" Padding="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="?? Configure SSH Access"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock x:Name="VMNameText"
+                           Text="VM: honeypot-001"
+                           FontSize="14"
+                           Foreground="{DynamicResource SubtleTextBrush}"
+                           Margin="0,8,0,0"/>
+            </StackPanel>
+
+            <!-- Configuration Panel -->
+            <StackPanel Grid.Row="1">
+
+                <!-- SSH Host -->
+                <TextBlock Text="SSH Host (IP Address)"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8"/>
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="SSHHostTextBox"
+                             Background="{DynamicResource HoverBrush}"
+                             Foreground="{DynamicResource TextBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"
+                             BorderThickness="1"
+                             Padding="10"
+                             FontSize="14"
+                             Height="36"
+                             Margin="0,0,8,0"/>
+
+                    <Button Grid.Column="1"
+                            Content="?? Auto-Detect"
+                            Background="{DynamicResource AccentBrush}"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="12,8"
+                            Height="36"
+                            Click="AutoDetectIP_Click"
+                            Cursor="Hand"/>
+                </Grid>
+
+                <!-- SSH Username -->
+                <TextBlock Text="Username"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8"/>
+                <TextBox x:Name="SSHUsernameTextBox"
+                         Background="{DynamicResource HoverBrush}"
+                         Foreground="{DynamicResource TextBrush}"
+                         BorderBrush="{DynamicResource BorderBrush}"
+                         BorderThickness="1"
+                         Padding="10"
+                         FontSize="14"
+                         Height="36"
+                         Margin="0,0,0,15"/>
+
+                <!-- Authentication Method -->
+                <TextBlock Text="Authentication Method"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                    <RadioButton x:Name="UsePasswordRadio"
+                                 Content="Password"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 IsChecked="True"
+                                 GroupName="AuthMethod"
+                                 Checked="AuthMethod_Changed"
+                                 Margin="0,0,20,0"/>
+                    <RadioButton x:Name="UseSSHKeyRadio"
+                                 Content="SSH Key"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 GroupName="AuthMethod"
+                                 Checked="AuthMethod_Changed"/>
+                </StackPanel>
+
+                <!-- Password Panel -->
+                <StackPanel x:Name="PasswordPanel" Visibility="Visible">
+                    <TextBlock Text="Password"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,8"/>
+                    <PasswordBox x:Name="SSHPasswordBox"
+                                 Background="{DynamicResource HoverBrush}"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Padding="10"
+                                 FontSize="14"
+                                 Height="36"
+                                 Margin="0,0,0,8"/>
+                    <CheckBox x:Name="RememberPasswordCheckBox"
+                              Content="Remember password (encrypted)"
+                              Foreground="{DynamicResource SubtleTextBrush}"
+                              IsChecked="True"
+                              Margin="0,0,0,15"/>
+                </StackPanel>
+
+                <!-- SSH Key Panel -->
+                <StackPanel x:Name="SSHKeyPanel" Visibility="Collapsed">
+                    <TextBlock Text="Private Key File"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,8"/>
+                    <Grid Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="SSHKeyPathTextBox"
+                                 Background="{DynamicResource HoverBrush}"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Padding="10"
+                                 FontSize="14"
+                                 Height="36"
+                                 IsReadOnly="True"
+                                 Margin="0,0,8,0"/>
+
+                        <Button Grid.Column="1"
+                                Content="?? Browse"
+                                Background="{DynamicResource AccentBrush}"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="12,8"
+                                Height="36"
+                                Click="BrowseSSHKey_Click"
+                                Cursor="Hand"/>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Port -->
+                <TextBlock Text="SSH Port"
+                           Foreground="{DynamicResource TextBrush}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8"/>
+                <TextBox x:Name="SSHPortTextBox"
+                         Text="22"
+                         Background="{DynamicResource HoverBrush}"
+                         Foreground="{DynamicResource TextBrush}"
+                         BorderBrush="{DynamicResource BorderBrush}"
+                         BorderThickness="1"
+                         Padding="10"
+                         FontSize="14"
+                         Height="36"
+                         Width="100"
+                         HorizontalAlignment="Left"
+                         Margin="0,0,0,15"/>
+
+            </StackPanel>
+
+            <!-- Action Buttons -->
+            <Grid Grid.Row="2" Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="StatusText"
+                           Text=""
+                           FontSize="13"
+                           Foreground="{DynamicResource SuccessBrush}"
+                           VerticalAlignment="Center"/>
+
+                <Button Grid.Column="1"
+                        Content="Test Connection"
+                        Background="{DynamicResource HoverBrush}"
+                        Foreground="{DynamicResource TextBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        Padding="15,8"
+                        Height="36"
+                        Click="TestConnection_Click"
+                        Cursor="Hand"
+                        Margin="0,0,8,0"/>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="Cancel"
+                            Background="{DynamicResource BorderBrush}"
+                            Foreground="{DynamicResource TextBrush}"
+                            BorderThickness="0"
+                            Padding="20,8"
+                            Height="36"
+                            Click="Cancel_Click"
+                            Cursor="Hand"
+                            Margin="0,0,8,0"/>
+
+                    <Button Content="Save &amp; Connect"
+                            Background="{DynamicResource AccentBrush}"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="20,8"
+                            Height="36"
+                            Click="SaveAndConnect_Click"
+                            Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+
+        </Grid>
+    </Border>
+</Window>

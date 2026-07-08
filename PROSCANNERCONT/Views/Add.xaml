@@ -1,0 +1,949 @@
+<Page x:Class="PROSCANNERCONT.Views.Add"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+      mc:Ignorable="d"
+      Background="{DynamicResource BackgroundBrush}"
+      Title="New Scan">
+
+  <Page.Resources>
+
+    <!-- ── Styled TextBox with corner radius + focus accent ring ── -->
+    <Style x:Key="StyledInput" TargetType="TextBox">
+      <Setter Property="Background"    Value="{DynamicResource HoverBrush}"/>
+      <Setter Property="Foreground"    Value="{DynamicResource TextBrush}"/>
+      <Setter Property="BorderBrush"   Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"       Value="{DynamicResource InputPadding}"/>
+      <Setter Property="FontFamily"    Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="FontSize"      Value="{DynamicResource FontSizeNormal}"/>
+      <Setter Property="CaretBrush"    Value="{DynamicResource AccentBrush}"/>
+      <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush}"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="TextBox">
+            <Border x:Name="bd"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{DynamicResource CornerRadiusNormal}">
+              <ScrollViewer x:Name="PART_ContentHost"
+                            Padding="{TemplateBinding Padding}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsFocused" Value="True">
+                <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="bd" Property="Opacity" Value="0.45"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- ── Preset chip (pill RadioButton) ── -->
+    <Style x:Key="PresetChip" TargetType="RadioButton">
+      <Setter Property="Background"      Value="{DynamicResource HoverBrush}"/>
+      <Setter Property="Foreground"      Value="{DynamicResource SubtleTextBrush}"/>
+      <Setter Property="BorderBrush"     Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"         Value="12,5"/>
+      <Setter Property="Margin"          Value="0,0,6,6"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="FontFamily"      Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="FontSize"        Value="{DynamicResource FontSizeNormal}"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="RadioButton">
+            <Border x:Name="bd"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{DynamicResource CornerRadiusRound}"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="bd" Property="Background"  Value="{DynamicResource AccentBrush}"/>
+                <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+              </Trigger>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="bd" Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- ── Scan-type card (RadioButton card) ── -->
+    <Style x:Key="ScanTypeCard" TargetType="RadioButton">
+      <Setter Property="Background"      Value="{DynamicResource HoverBrush}"/>
+      <Setter Property="Foreground"      Value="{DynamicResource SubtleTextBrush}"/>
+      <Setter Property="BorderBrush"     Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Margin"          Value="0,0,8,8"/>
+      <Setter Property="Padding"         Value="12,10"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="RadioButton">
+            <Border x:Name="bd"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{DynamicResource CornerRadiusNormal}"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="bd" Property="Background"  Value="{DynamicResource SelectionBrush}"/>
+                <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+              </Trigger>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="bd" Property="Background" Value="{DynamicResource SelectionBrush}"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- ── Section card ── -->
+    <Style x:Key="SectionCard" TargetType="Border">
+      <Setter Property="Background"      Value="{DynamicResource SecondaryBackgroundBrush}"/>
+      <Setter Property="BorderBrush"     Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius"    Value="{DynamicResource CornerRadiusLarge}"/>
+      <Setter Property="Padding"         Value="20"/>
+      <Setter Property="Margin"          Value="0,0,0,14"/>
+    </Style>
+
+    <!-- ── Section icon badge ── -->
+    <Style x:Key="SectionBadge" TargetType="Border">
+      <Setter Property="Width"        Value="32"/>
+      <Setter Property="Height"       Value="32"/>
+      <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusNormal}"/>
+      <Setter Property="Margin"       Value="0,0,10,0"/>
+    </Style>
+
+    <!-- ── Section title ── -->
+    <Style x:Key="SectionTitle" TargetType="TextBlock">
+      <Setter Property="Foreground"  Value="{DynamicResource TextBrush}"/>
+      <Setter Property="FontSize"    Value="13"/>
+      <Setter Property="FontWeight"  Value="SemiBold"/>
+      <Setter Property="FontFamily"  Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- ── Field label ── -->
+    <Style x:Key="FieldLabel" TargetType="TextBlock">
+      <Setter Property="Foreground"  Value="{DynamicResource SubtleTextBrush}"/>
+      <Setter Property="FontSize"    Value="10"/>
+      <Setter Property="FontWeight"  Value="Bold"/>
+      <Setter Property="FontFamily"  Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="Margin"      Value="0,0,0,5"/>
+    </Style>
+
+    <!-- ── Hint text ── -->
+    <Style x:Key="HintText" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+      <Setter Property="FontSize"   Value="10"/>
+      <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="Margin"     Value="0,3,0,0"/>
+      <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <!-- ── Section divider ── -->
+    <Style x:Key="Divider" TargetType="Border">
+      <Setter Property="Height"     Value="1"/>
+      <Setter Property="Background" Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="Opacity"    Value="0.5"/>
+      <Setter Property="Margin"     Value="0,12,0,12"/>
+    </Style>
+
+    <!-- ── Primary action button ── -->
+    <Style x:Key="PrimaryBtn" TargetType="Button">
+      <Setter Property="Background"      Value="{DynamicResource AccentBrush}"/>
+      <Setter Property="Foreground"      Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding"         Value="{DynamicResource ButtonPadding}"/>
+      <Setter Property="FontFamily"      Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="FontSize"        Value="{DynamicResource FontSizeNormal}"/>
+      <Setter Property="FontWeight"      Value="SemiBold"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="bd" Background="{TemplateBinding Background}"
+                    CornerRadius="{DynamicResource CornerRadiusNormal}"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="bd" Property="Opacity" Value="0.85"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="bd" Property="Opacity" Value="0.7"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <!-- ── Ghost button ── -->
+    <Style x:Key="GhostBtn" TargetType="Button" BasedOn="{StaticResource PrimaryBtn}">
+      <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+    </Style>
+
+    <!-- ── Quick preset button (sidebar) ── -->
+    <Style x:Key="QuickPresetBtn" TargetType="Button">
+      <Setter Property="Background"      Value="{DynamicResource HoverBrush}"/>
+      <Setter Property="Foreground"      Value="{DynamicResource TextBrush}"/>
+      <Setter Property="BorderBrush"     Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Margin"          Value="0,0,0,6"/>
+      <Setter Property="Cursor"          Value="Hand"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="bd"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{DynamicResource CornerRadiusNormal}"
+                    Padding="12,10">
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="bd" Property="Background"  Value="{DynamicResource SelectionBrush}"/>
+                <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="bd" Property="Opacity" Value="0.75"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+  </Page.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- ══════════════════ PAGE HEADER ══════════════════ -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource SecondaryBackgroundBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,0,0,1"
+            Padding="28,18">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel>
+          <TextBlock Text="New Scan"
+                     Foreground="{DynamicResource TextBrush}"
+                     FontFamily="{DynamicResource PrimaryFont}"
+                     FontSize="22" FontWeight="Bold"/>
+          <TextBlock Text="Configure a target, pick a scan type, then launch or save as a reusable profile"
+                     Foreground="{DynamicResource SubtleTextBrush}"
+                     FontFamily="{DynamicResource PrimaryFont}"
+                     FontSize="12" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Status badge -->
+        <Border Grid.Column="1"
+                Background="{DynamicResource HoverBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="{DynamicResource CornerRadiusNormal}"
+                Padding="12,6" VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal">
+            <Ellipse Width="7" Height="7" Fill="{DynamicResource SuccessBrush}"
+                     Margin="0,0,6,0" VerticalAlignment="Center"/>
+            <TextBlock Text="Ready to scan"
+                       Foreground="{DynamicResource SuccessBrush}"
+                       FontFamily="{DynamicResource PrimaryFont}"
+                       FontSize="11" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- ══════════════════ SCROLLABLE BODY ══════════════════ -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <Grid Margin="28,20,28,28">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="16"/>
+          <ColumnDefinition Width="280"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ════════════════════════════════════════
+             LEFT COLUMN — main form
+        ════════════════════════════════════════ -->
+        <StackPanel Grid.Column="0">
+
+          <!-- ── TARGET ── -->
+          <Border Style="{StaticResource SectionCard}">
+            <StackPanel>
+
+              <!-- Header -->
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <Border Style="{StaticResource SectionBadge}"
+                        Background="{DynamicResource AccentBrush}">
+                  <fa:IconBlock Icon="Crosshairs" Foreground="White" FontSize="14"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="Target" Style="{StaticResource SectionTitle}"/>
+                  <TextBlock Text="Host, IP address, or CIDR range to scan"
+                             Style="{StaticResource HintText}" Margin="0,1,0,0"/>
+                </StackPanel>
+              </StackPanel>
+
+              <!-- Profile name -->
+              <TextBlock Text="PROFILE NAME" Style="{StaticResource FieldLabel}"/>
+              <TextBox x:Name="ProfileNameBox"
+                       Style="{StaticResource StyledInput}"
+                       Height="36" MaxLength="80"
+                       Margin="0,0,0,14"
+                       ToolTip="Optional — used when saving as a profile"/>
+
+              <!-- Target host with icon prefix -->
+              <TextBlock Text="TARGET HOST / IP / RANGE" Style="{StaticResource FieldLabel}"/>
+              <Border x:Name="TargetInputBorder"
+                      Background="{DynamicResource HoverBrush}"
+                      BorderBrush="{DynamicResource BorderBrush}"
+                      BorderThickness="1"
+                      CornerRadius="{DynamicResource CornerRadiusNormal}"
+                      Height="38" Margin="0,0,0,4">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <fa:IconBlock Grid.Column="0" Icon="Globe"
+                                Foreground="{DynamicResource SubtleTextBrush}"
+                                FontSize="13"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  <Border Grid.Column="0" Width="1" HorizontalAlignment="Right"
+                          Background="{DynamicResource BorderBrush}" Opacity="0.5"/>
+                  <TextBox Grid.Column="1"
+                           x:Name="TargetBox"
+                           Background="Transparent"
+                           BorderThickness="0"
+                           Foreground="{DynamicResource TextBrush}"
+                           CaretBrush="{DynamicResource AccentBrush}"
+                           SelectionBrush="{DynamicResource AccentBrush}"
+                           Padding="10,0"
+                           FontFamily="{DynamicResource PrimaryFont}"
+                           FontSize="{DynamicResource FontSizeNormal}"
+                           VerticalContentAlignment="Center"
+                           MaxLength="200"
+                           GotFocus="TargetBox_GotFocus"
+                           LostFocus="TargetBox_LostFocus"/>
+                </Grid>
+              </Border>
+              <TextBlock Text="e.g.  192.168.1.1  ·  hostname.local  ·  10.0.0.0/24"
+                         Style="{StaticResource HintText}" Margin="0,0,0,14"/>
+
+              <!-- Notes -->
+              <TextBlock Text="NOTES / DESCRIPTION" Style="{StaticResource FieldLabel}"/>
+              <TextBox x:Name="DescriptionBox"
+                       Style="{StaticResource StyledInput}"
+                       Height="58" MaxLength="400"
+                       TextWrapping="Wrap"
+                       AcceptsReturn="True"
+                       VerticalScrollBarVisibility="Auto"
+                       VerticalContentAlignment="Top"/>
+            </StackPanel>
+          </Border>
+
+          <!-- ── PORT RANGE ── -->
+          <Border Style="{StaticResource SectionCard}">
+            <StackPanel>
+
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <Border Style="{StaticResource SectionBadge}"
+                        Background="{DynamicResource WarningBrush}">
+                  <fa:IconBlock Icon="NetworkWired" Foreground="White" FontSize="13"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="Port Range" Style="{StaticResource SectionTitle}"/>
+                  <TextBlock Text="Quick presets or enter a custom range below"
+                             Style="{StaticResource HintText}" Margin="0,1,0,0"/>
+                </StackPanel>
+              </StackPanel>
+
+              <!-- Preset chips -->
+              <TextBlock Text="PRESET" Style="{StaticResource FieldLabel}"/>
+              <WrapPanel Margin="0,0,0,14">
+                <RadioButton x:Name="PortPreset_Quick"    Content="Quick (1–100)"      GroupName="PortRange" Style="{StaticResource PresetChip}" Checked="PortPreset_Checked"/>
+                <RadioButton x:Name="PortPreset_Standard" Content="Standard (1–1024)"  GroupName="PortRange" Style="{StaticResource PresetChip}" Checked="PortPreset_Checked" IsChecked="True"/>
+                <RadioButton x:Name="PortPreset_Common"   Content="Common (1–8080)"    GroupName="PortRange" Style="{StaticResource PresetChip}" Checked="PortPreset_Checked"/>
+                <RadioButton x:Name="PortPreset_Full"     Content="Full (1–65535)"     GroupName="PortRange" Style="{StaticResource PresetChip}" Checked="PortPreset_Checked"/>
+                <RadioButton x:Name="PortPreset_Custom"   Content="Custom"             GroupName="PortRange" Style="{StaticResource PresetChip}" Checked="PortPreset_Checked"/>
+              </WrapPanel>
+
+              <!-- Start / End port inputs (always visible) -->
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="12"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                  <TextBlock Text="START PORT" Style="{StaticResource FieldLabel}"/>
+                  <TextBox x:Name="StartPortBox" Style="{StaticResource StyledInput}"
+                           Height="36" Text="1" MaxLength="5"/>
+                </StackPanel>
+                <TextBlock Grid.Column="1" Text="—" Foreground="{DynamicResource SubtleTextBrush}"
+                           VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                           Margin="0,0,0,8"/>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="END PORT" Style="{StaticResource FieldLabel}"/>
+                  <TextBox x:Name="EndPortBox" Style="{StaticResource StyledInput}"
+                           Height="36" Text="1024" MaxLength="5"/>
+                </StackPanel>
+              </Grid>
+            </StackPanel>
+          </Border>
+
+          <!-- ── SCAN TYPE ── -->
+          <Border Style="{StaticResource SectionCard}">
+            <StackPanel>
+
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <Border Style="{StaticResource SectionBadge}"
+                        Background="{DynamicResource CriticalBrush}">
+                  <fa:IconBlock Icon="Bolt" Foreground="White" FontSize="13"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="Scan Type" Style="{StaticResource SectionTitle}"/>
+                  <TextBlock Text="Select the scanning technique"
+                             Style="{StaticResource HintText}" Margin="0,1,0,0"/>
+                </StackPanel>
+              </StackPanel>
+
+              <!-- 3×2 card grid -->
+              <UniformGrid Columns="3" Rows="2">
+
+                <RadioButton x:Name="ScanType_TcpConnect" GroupName="ScanType" IsChecked="True"
+                             Style="{StaticResource ScanTypeCard}">
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                      <fa:IconBlock Icon="Plug" Foreground="{DynamicResource AccentBrush}"
+                                    FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="TCP Connect"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 FontFamily="{DynamicResource PrimaryFont}"
+                                 FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    </StackPanel>
+                    <TextBlock Text="-sT  ·  No privileges needed"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="ScanType_TcpSyn" GroupName="ScanType"
+                             Style="{StaticResource ScanTypeCard}">
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                      <fa:IconBlock Icon="Wifi" Foreground="{DynamicResource WarningBrush}"
+                                    FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="TCP SYN"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 FontFamily="{DynamicResource PrimaryFont}"
+                                 FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    </StackPanel>
+                    <TextBlock Text="-sS  ·  Stealthy, needs admin"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="ScanType_TcpAck" GroupName="ScanType"
+                             Style="{StaticResource ScanTypeCard}">
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                      <fa:IconBlock Icon="Shield" Foreground="{DynamicResource SuccessBrush}"
+                                    FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="TCP ACK"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 FontFamily="{DynamicResource PrimaryFont}"
+                                 FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    </StackPanel>
+                    <TextBlock Text="-sA  ·  Firewall mapping"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="ScanType_TcpFin" GroupName="ScanType"
+                             Style="{StaticResource ScanTypeCard}">
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                      <fa:IconBlock Icon="EyeSlash" Foreground="{DynamicResource SubtleTextBrush}"
+                                    FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="TCP FIN"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 FontFamily="{DynamicResource PrimaryFont}"
+                                 FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    </StackPanel>
+                    <TextBlock Text="-sF  ·  Stealthy FIN probe"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="ScanType_Xmas" GroupName="ScanType"
+                             Style="{StaticResource ScanTypeCard}">
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                      <fa:IconBlock Icon="SkullCrossbones" Foreground="{DynamicResource CriticalBrush}"
+                                    FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="XMAS"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 FontFamily="{DynamicResource PrimaryFont}"
+                                 FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    </StackPanel>
+                    <TextBlock Text="-sX  ·  FIN+URG+PSH flags"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </RadioButton>
+
+                <RadioButton x:Name="ScanType_Udp" GroupName="ScanType"
+                             Style="{StaticResource ScanTypeCard}">
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                      <fa:IconBlock Icon="Satellite" Foreground="{DynamicResource AccentLightBrush}"
+                                    FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="UDP"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 FontFamily="{DynamicResource PrimaryFont}"
+                                 FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    </StackPanel>
+                    <TextBlock Text="-sU  ·  UDP port scan"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </RadioButton>
+
+              </UniformGrid>
+            </StackPanel>
+          </Border>
+
+          <!-- ── OPTIONS ── -->
+          <Border Style="{StaticResource SectionCard}">
+            <StackPanel>
+
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <Border Style="{StaticResource SectionBadge}"
+                        Background="{DynamicResource SelectionBrush}">
+                  <fa:IconBlock Icon="Sliders" Foreground="{DynamicResource AccentBrush}"
+                                FontSize="13"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="Options" Style="{StaticResource SectionTitle}"/>
+                  <TextBlock Text="Timing and detection settings"
+                             Style="{StaticResource HintText}" Margin="0,1,0,0"/>
+                </StackPanel>
+              </StackPanel>
+
+              <!-- Timeout + Concurrency -->
+              <Grid Margin="0,0,0,14">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="12"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                  <TextBlock Text="TIMEOUT (MS)" Style="{StaticResource FieldLabel}"/>
+                  <TextBox x:Name="TimeoutBox" Style="{StaticResource StyledInput}"
+                           Height="36" Text="2000" MaxLength="6"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="MAX CONCURRENT" Style="{StaticResource FieldLabel}"/>
+                  <TextBox x:Name="ConcurrentBox" Style="{StaticResource StyledInput}"
+                           Height="36" Text="50" MaxLength="4"/>
+                </StackPanel>
+              </Grid>
+
+              <Border Style="{StaticResource Divider}"/>
+
+              <!-- Detection flags -->
+              <TextBlock Text="DETECTION" Style="{StaticResource FieldLabel}"/>
+              <WrapPanel>
+                <Border Background="{DynamicResource HoverBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource CornerRadiusNormal}"
+                        Padding="10,7" Margin="0,0,8,0">
+                  <StackPanel Orientation="Horizontal">
+                    <CheckBox x:Name="DetectVersionsCheck"
+                              IsChecked="True"
+                              VerticalAlignment="Center"/>
+                    <fa:IconBlock Icon="Tag" Foreground="{DynamicResource AccentBrush}"
+                                  FontSize="11" Margin="7,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Version Detection"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}"
+                               FontSize="{DynamicResource FontSizeNormal}"
+                               VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Border>
+                <Border Background="{DynamicResource HoverBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource CornerRadiusNormal}"
+                        Padding="10,7">
+                  <StackPanel Orientation="Horizontal">
+                    <CheckBox x:Name="CheckCvesCheck"
+                              IsChecked="True"
+                              VerticalAlignment="Center"/>
+                    <fa:IconBlock Icon="Bug" Foreground="{DynamicResource CriticalBrush}"
+                                  FontSize="11" Margin="7,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="CVE Lookup"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}"
+                               FontSize="{DynamicResource FontSizeNormal}"
+                               VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Border>
+              </WrapPanel>
+            </StackPanel>
+          </Border>
+
+          <!-- ── VALIDATION ── -->
+          <Border x:Name="ValidationBorder"
+                  Background="{DynamicResource HoverBrush}"
+                  BorderBrush="{DynamicResource CriticalBrush}"
+                  BorderThickness="1"
+                  CornerRadius="{DynamicResource CornerRadiusNormal}"
+                  Padding="14,10"
+                  Margin="0,0,0,14"
+                  Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal">
+              <fa:IconBlock Icon="TriangleExclamation"
+                            Foreground="{DynamicResource CriticalBrush}"
+                            FontSize="13" Margin="0,0,10,0" VerticalAlignment="Center"/>
+              <TextBlock x:Name="ValidationText"
+                         Foreground="{DynamicResource CriticalBrush}"
+                         FontFamily="{DynamicResource PrimaryFont}"
+                         FontSize="{DynamicResource FontSizeNormal}"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <!-- ── ACTION BUTTONS ── -->
+          <StackPanel Orientation="Horizontal">
+            <Button x:Name="StartScanButton"
+                    Style="{StaticResource PrimaryBtn}"
+                    Click="StartScanButton_Click"
+                    Margin="0,0,10,0">
+              <StackPanel Orientation="Horizontal">
+                <fa:IconBlock Icon="Play" Foreground="White" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Launch Scan" FontFamily="{DynamicResource PrimaryFont}"
+                           FontWeight="SemiBold" Foreground="White"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="SaveProfileButton"
+                    Style="{StaticResource GhostBtn}"
+                    Click="SaveProfileButton_Click">
+              <StackPanel Orientation="Horizontal">
+                <fa:IconBlock Icon="FloppyDisk" FontSize="12" Margin="0,0,8,0"
+                              Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
+                <TextBlock Text="Save Profile" FontFamily="{DynamicResource PrimaryFont}"
+                           FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
+              </StackPanel>
+            </Button>
+          </StackPanel>
+
+        </StackPanel>
+
+        <!-- ════════════════════════════════════════
+             RIGHT COLUMN — sidebar
+        ════════════════════════════════════════ -->
+        <StackPanel Grid.Column="2">
+
+          <!-- ── QUICK PRESETS ── -->
+          <Border Style="{StaticResource SectionCard}">
+            <StackPanel>
+
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                <Border Style="{StaticResource SectionBadge}"
+                        Background="{DynamicResource AccentBrush}">
+                  <fa:IconBlock Icon="BoltLightning" Foreground="White" FontSize="13"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="Quick Presets" Style="{StaticResource SectionTitle}"/>
+                  <TextBlock Text="One-click fill" Style="{StaticResource HintText}" Margin="0,1,0,0"/>
+                </StackPanel>
+              </StackPanel>
+
+              <!-- Web Server -->
+              <Button Style="{StaticResource QuickPresetBtn}" Tag="WebServer" Click="QuickPreset_Click">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Border Grid.Column="0" Width="26" Height="26"
+                          Background="{DynamicResource SelectionBrush}"
+                          CornerRadius="{DynamicResource CornerRadiusSmall}">
+                    <fa:IconBlock Icon="Globe" Foreground="{DynamicResource AccentBrush}"
+                                  FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  </Border>
+                  <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Web Server"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}"
+                               FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    <TextBlock Text="Ports 1–8443 · TCP Connect"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </Grid>
+              </Button>
+
+              <!-- SSH / Admin -->
+              <Button Style="{StaticResource QuickPresetBtn}" Tag="SshAdmin" Click="QuickPreset_Click">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Border Grid.Column="0" Width="26" Height="26"
+                          Background="{DynamicResource HoverBrush}"
+                          BorderBrush="{DynamicResource WarningBrush}"
+                          BorderThickness="1"
+                          CornerRadius="{DynamicResource CornerRadiusSmall}">
+                    <fa:IconBlock Icon="Terminal" Foreground="{DynamicResource WarningBrush}"
+                                  FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  </Border>
+                  <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="SSH / Admin"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}"
+                               FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    <TextBlock Text="Ports 1–1024 · SYN scan"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </Grid>
+              </Button>
+
+              <!-- Database -->
+              <Button Style="{StaticResource QuickPresetBtn}" Tag="Database" Click="QuickPreset_Click">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Border Grid.Column="0" Width="26" Height="26"
+                          Background="{DynamicResource HoverBrush}"
+                          BorderBrush="{DynamicResource SuccessBrush}"
+                          BorderThickness="1"
+                          CornerRadius="{DynamicResource CornerRadiusSmall}">
+                    <fa:IconBlock Icon="Database" Foreground="{DynamicResource SuccessBrush}"
+                                  FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  </Border>
+                  <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Database"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}"
+                               FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    <TextBlock Text="Ports 1–1024 · TCP Connect + CVE"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </Grid>
+              </Button>
+
+              <!-- Full Audit -->
+              <Button Style="{StaticResource QuickPresetBtn}" Tag="FullAudit" Click="QuickPreset_Click">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Border Grid.Column="0" Width="26" Height="26"
+                          Background="{DynamicResource HoverBrush}"
+                          BorderBrush="{DynamicResource CriticalBrush}"
+                          BorderThickness="1"
+                          CornerRadius="{DynamicResource CornerRadiusSmall}">
+                    <fa:IconBlock Icon="MagnifyingGlass" Foreground="{DynamicResource CriticalBrush}"
+                                  FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  </Border>
+                  <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Full Audit"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}"
+                               FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    <TextBlock Text="All 65535 ports · Full detection"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </Grid>
+              </Button>
+
+              <!-- Stealth Recon -->
+              <Button Style="{StaticResource QuickPresetBtn}" Tag="StealthRecon" Click="QuickPreset_Click">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Border Grid.Column="0" Width="26" Height="26"
+                          Background="{DynamicResource HoverBrush}"
+                          BorderBrush="{DynamicResource SubtleTextBrush}"
+                          BorderThickness="1"
+                          CornerRadius="{DynamicResource CornerRadiusSmall}">
+                    <fa:IconBlock Icon="UserSecret" Foreground="{DynamicResource SubtleTextBrush}"
+                                  FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  </Border>
+                  <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Stealth Recon"
+                               Foreground="{DynamicResource TextBrush}"
+                               FontFamily="{DynamicResource PrimaryFont}"
+                               FontWeight="SemiBold" FontSize="{DynamicResource FontSizeNormal}"/>
+                    <TextBlock Text="Top 1024 · SYN · No detection"
+                               Style="{StaticResource HintText}" Margin="0"/>
+                  </StackPanel>
+                </Grid>
+              </Button>
+
+            </StackPanel>
+          </Border>
+
+          <!-- ── SAVED PROFILES ── -->
+          <Border Style="{StaticResource SectionCard}">
+            <StackPanel>
+
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <Border Style="{StaticResource SectionBadge}"
+                        Background="{DynamicResource HoverBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1">
+                  <fa:IconBlock Icon="BookOpen" Foreground="{DynamicResource SubtleTextBrush}"
+                                FontSize="13"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="Saved Profiles" Style="{StaticResource SectionTitle}"/>
+                  <TextBlock Text="Click to load into form"
+                             Style="{StaticResource HintText}" Margin="0,1,0,0"/>
+                </StackPanel>
+              </StackPanel>
+
+              <TextBlock x:Name="NoProfilesText"
+                         Text="No saved profiles yet."
+                         Style="{StaticResource HintText}"
+                         Margin="0,0,0,4"/>
+
+              <ListBox x:Name="ProfilesList"
+                       Background="Transparent"
+                       BorderThickness="0"
+                       Visibility="Collapsed"
+                       SelectionChanged="ProfilesList_SelectionChanged">
+                <ListBox.ItemContainerStyle>
+                  <Style TargetType="ListBoxItem">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0,0,0,4"/>
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                          <Border x:Name="ib"
+                                  Background="{DynamicResource HoverBrush}"
+                                  BorderBrush="{DynamicResource BorderBrush}"
+                                  BorderThickness="1"
+                                  CornerRadius="{DynamicResource CornerRadiusNormal}"
+                                  Padding="10,8">
+                            <ContentPresenter/>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                              <Setter TargetName="ib" Property="Background"  Value="{DynamicResource SelectionBrush}"/>
+                              <Setter TargetName="ib" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                              <Setter TargetName="ib" Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                            </Trigger>
+                          </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                      </Grid.ColumnDefinitions>
+                      <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Name}"
+                                   Foreground="{DynamicResource TextBrush}"
+                                   FontFamily="{DynamicResource PrimaryFont}"
+                                   FontWeight="SemiBold"
+                                   FontSize="{DynamicResource FontSizeNormal}"/>
+                        <TextBlock Text="{Binding Summary}"
+                                   Foreground="{DynamicResource SubtleTextBrush}"
+                                   FontFamily="{DynamicResource PrimaryFont}"
+                                   FontSize="10"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,2,0,0"/>
+                      </StackPanel>
+                      <Button Grid.Column="1"
+                              Tag="{Binding Id}"
+                              Click="DeleteProfile_Click"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              Cursor="Hand"
+                              Padding="4"
+                              ToolTip="Delete">
+                        <fa:IconBlock Icon="Trash"
+                                      Foreground="{DynamicResource SubtleTextBrush}"
+                                      FontSize="11"/>
+                      </Button>
+                    </Grid>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </StackPanel>
+          </Border>
+
+        </StackPanel>
+      </Grid>
+    </ScrollViewer>
+  </Grid>
+</Page>

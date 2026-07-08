@@ -1,0 +1,880 @@
+<Page x:Class="PROSCANNERCONT.Views.NetworkIDSDashboardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d" Background="{DynamicResource BackgroundBrush}" Title="Network IDS">
+  <Page.Resources>
+    <Style TargetType="DataGrid">
+      <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+      <Setter Property="BorderThickness" Value="0"/><Setter Property="GridLinesVisibility" Value="Horizontal"/>
+      <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource BorderBrush}"/><Setter Property="RowBackground" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+      <Setter Property="AlternatingRowBackground" Value="{DynamicResource SecondaryBackgroundBrush}"/><Setter Property="ColumnHeaderHeight" Value="32"/>
+      <Setter Property="RowHeight" Value="26"/><Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontFamily" Value="Consolas"/><Setter Property="CanUserAddRows" Value="False"/>
+      <Setter Property="CanUserDeleteRows" Value="False"/><Setter Property="IsReadOnly" Value="True"/>
+      <Setter Property="AutoGenerateColumns" Value="False"/><Setter Property="SelectionMode" Value="Single"/>
+    </Style>
+    <Style TargetType="DataGridColumnHeader">
+      <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+      <Setter Property="FontWeight" Value="SemiBold"/><Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
+      <Setter Property="FontSize" Value="11"/><Setter Property="Padding" Value="8,0"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/><Setter Property="BorderThickness" Value="0,0,1,1"/>
+    </Style>
+    <Style TargetType="DataGridRow">
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+      <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger>
+        <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource SelectionBrush}"/><Setter Property="Foreground" Value="White"/></Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style TargetType="DataGridCell">
+      <Setter Property="Padding" Value="8,3"/><Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="DataGridCell">
+            <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+              <ContentPresenter VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="TabItem">
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/><Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="0"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="TabItem">
+            <Border x:Name="Bd" Background="Transparent" BorderThickness="0,0,0,2" BorderBrush="Transparent" Padding="18,10">
+              <ContentPresenter ContentSource="Header"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsSelected" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/><Setter Property="Foreground" Value="White"/></Trigger>
+              <Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="FBtn" TargetType="Button">
+      <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+      <Setter Property="FontSize" Value="11"/><Setter Property="FontFamily" Value="Segoe UI Semibold"/>
+      <Setter Property="BorderThickness" Value="1"/><Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+      <Setter Property="Padding" Value="10,4"/><Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="ABtn" TargetType="Button" BasedOn="{StaticResource FBtn}">
+      <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+    </Style>
+  </Page.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="140" MinHeight="60" MaxHeight="500"/>  <!-- Live traffic graph — drag splitter to resize -->
+      <RowDefinition Height="6"/>  <!-- Resize splitter -->
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- HEADER -->
+    <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="20,12">
+      <Grid>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Border Background="{DynamicResource HoverBrush}" CornerRadius="4" Padding="8,6" Margin="0,0,14,0">
+            <TextBlock Text="NIDS" Foreground="{DynamicResource SeverityInfoBrush}" FontSize="13" FontWeight="Bold" FontFamily="Consolas"/>
+          </Border>
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Network Intrusion Detection System" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource PrimaryFont}"/>
+            <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+              <Ellipse x:Name="StatusDot" Width="7" Height="7" Fill="{DynamicResource SeverityCriticalBrush}" VerticalAlignment="Center" Margin="0,0,7,0"/>
+              <TextBlock x:Name="StatusLabel" Text="OFFLINE  —  select an interface and click Start Monitoring" FontSize="11" Foreground="{DynamicResource SubtleTextBrush}" FontFamily="{DynamicResource PrimaryFont}"/>
+            </StackPanel>
+          </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <Button x:Name="MonitoringToggleButton" Content="▶  Start Monitoring" Click="ToggleMonitoring_Click"
+                  Style="{StaticResource ABtn}" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource SuccessBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                  FontSize="12" FontWeight="SemiBold" Padding="16,7" Margin="0,0,8,0"/>
+          <Button Content="🔌  Interface" Click="SelectInterface_Click" Style="{StaticResource ABtn}" Padding="12,7" Margin="0,0,6,0"/>
+          <Button Content="⬇  Export"     Click="ExportCsv_Click"        Style="{StaticResource ABtn}" Padding="12,7" Margin="0,0,6,0"/>
+          <Button Content="Report"        Click="ExportReport_Click"     Style="{StaticResource ABtn}" Padding="12,7" Margin="0,0,6,0" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderBrush}"/>
+          <Button Content="📥 Config"     Click="ImportConfig_Click"     Style="{StaticResource ABtn}" Padding="12,7" Margin="0,0,6,0" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource WarningBrush}" BorderBrush="{DynamicResource BorderBrush}" ToolTip="Import PrivaCore config (rules, thresholds, allowlist, HIDS settings)"/>
+          <Button Content="📤 Config"     Click="ExportConfig_Click"     Style="{StaticResource ABtn}" Padding="12,7" Margin="0,0,6,0" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource WarningBrush}" BorderBrush="{DynamicResource BorderBrush}" ToolTip="Export current config to JSON"/>
+          <Button Content="↺"             Click="RefreshDashboard_Click" Style="{StaticResource ABtn}" Padding="10,7" FontSize="14"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- MODE SWITCHER -->
+    <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="20,8">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <TextBlock Text="IDS MODE" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold"
+                   FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center" Margin="0,0,18,0"/>
+        <Border Background="{DynamicResource HoverBrush}" CornerRadius="4" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
+                Padding="16,5" Margin="0,0,6,0" VerticalAlignment="Center">
+          <TextBlock Text="⊞  Network IDS" Foreground="{DynamicResource SeverityInfoBrush}" FontSize="12"
+                     FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+        </Border>
+        <Button Click="SwitchToHids_Click" Style="{StaticResource ABtn}"
+                Padding="16,5" Foreground="{DynamicResource SubtleTextBrush}" VerticalAlignment="Center">
+          <TextBlock Text="⊟  Host IDS" FontSize="12" FontFamily="{DynamicResource PrimaryFont}" Foreground="{DynamicResource SubtleTextBrush}"/>
+        </Button>
+      </StackPanel>
+    </Border>
+
+    <!-- STAT CARDS -->
+    <Grid Grid.Row="2" Margin="16,10,16,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <Border Grid.Column="0" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="14,10" Margin="0,0,6,0">
+        <StackPanel>
+          <TextBlock Text="PACKETS CAPTURED" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+          <TextBlock x:Name="PacketsCapturedText" Text="0" Foreground="{DynamicResource SeverityLowBrush}" FontSize="26" FontWeight="Bold" FontFamily="Consolas" Margin="0,3,0,0"/>
+          <TextBlock x:Name="PacketRateText" Text="0 pkt/s" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+        </StackPanel>
+      </Border>
+      <Border Grid.Column="1" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource CriticalBrush}" BorderThickness="1" Padding="14,10" Margin="0,0,6,0">
+        <StackPanel>
+          <TextBlock Text="THREATS DETECTED" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+          <TextBlock x:Name="ThreatsDetectedText" Text="0" Foreground="{DynamicResource SeverityCriticalBrush}" FontSize="26" FontWeight="Bold" FontFamily="Consolas" Margin="0,3,0,0"/>
+          <TextBlock x:Name="UnackedText" Text="0 unacknowledged" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+        </StackPanel>
+      </Border>
+      <Border Grid.Column="2" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource WarningBrush}" BorderThickness="1" Padding="14,10" Margin="0,0,6,0">
+        <StackPanel>
+          <TextBlock Text="CRITICAL / HIGH" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+          <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+            <TextBlock x:Name="CriticalAlertsText" Text="0" Foreground="{DynamicResource SeverityCriticalBrush}" FontSize="26" FontWeight="Bold" FontFamily="Consolas"/>
+            <TextBlock Text=" / " Foreground="{DynamicResource SubtleTextBrush}" FontSize="20" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+            <TextBlock x:Name="HighAlertsText" Text="0" Foreground="{DynamicResource SeverityHighBrush}" FontSize="26" FontWeight="Bold" FontFamily="Consolas"/>
+          </StackPanel>
+          <TextBlock Text="requires attention" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+        </StackPanel>
+      </Border>
+      <Border Grid.Column="3" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="14,10" Margin="0,0,6,0">
+        <StackPanel>
+          <TextBlock Text="SIGNATURE MATCHES" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+          <TextBlock x:Name="SignatureMatchesText" Text="0" Foreground="{DynamicResource SeverityMediumBrush}" FontSize="26" FontWeight="Bold" FontFamily="Consolas" Margin="0,3,0,0"/>
+          <TextBlock Text="rule-based detections" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+        </StackPanel>
+      </Border>
+      <Border Grid.Column="4" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="14,10" Margin="0,0,6,0">
+        <StackPanel>
+          <TextBlock Text="ACTIVE RULES" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+          <TextBlock x:Name="ActiveRulesText" Text="0 / 25" Foreground="{DynamicResource AccentBrush}" FontSize="26" FontWeight="Bold" FontFamily="Consolas" Margin="0,3,0,0"/>
+          <TextBlock Text="signatures + behavioral" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+        </StackPanel>
+      </Border>
+      <Border Grid.Column="5" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="14,10">
+        <StackPanel>
+          <TextBlock Text="BEHAVIORAL DETECTORS" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+          <TextBlock x:Name="BehavioralText" Text="5" Foreground="{DynamicResource WarningBrush}" FontSize="26" FontWeight="Bold" FontFamily="Consolas" Margin="0,3,0,0"/>
+          <TextBlock Text="scan · flood · brute force" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- INTERFACE STRIP -->
+    <Border Grid.Row="3" Margin="16,8,16,0" CornerRadius="4" Background="{DynamicResource HoverBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="12,5">
+      <TextBlock x:Name="InterfaceLabel" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource AccentBrush}"
+                 Text="No interface selected  ·  click  Interface  to choose, then Start Monitoring"/>
+    </Border>
+
+    <!-- LIVE TRAFFIC GRAPH -->
+    <Border Grid.Row="4" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,1" Margin="0,6,0,0">
+      <Grid Margin="10,6,10,6">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="38"/>  <!-- Y-axis labels -->
+          <ColumnDefinition Width="*"/>   <!-- Chart -->
+          <ColumnDefinition Width="120"/> <!-- Legend + live values -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Y-axis labels (populated in code-behind) -->
+        <Canvas x:Name="YAxisCanvas" Grid.Column="0" VerticalAlignment="Stretch"/>
+
+        <!-- Chart canvas -->
+        <Border Grid.Column="1" Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="3" ClipToBounds="True">
+          <Canvas x:Name="TrafficCanvas" ClipToBounds="True"
+                  SizeChanged="TrafficCanvas_SizeChanged"/>
+        </Border>
+
+        <!-- Legend + live readout -->
+        <StackPanel Grid.Column="2" Margin="10,2,0,2" VerticalAlignment="Center">
+          <TextBlock Text="LIVE TRAFFIC" Foreground="{DynamicResource SubtleTextBrush}" FontSize="8" FontWeight="Bold"
+                     FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,6"/>
+
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+            <Border Width="12" Height="3" Background="{DynamicResource SeverityInfoBrush}" CornerRadius="1" Margin="0,0,6,0" VerticalAlignment="Center"/>
+            <TextBlock Text="Packets/s" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+          </StackPanel>
+          <TextBlock x:Name="GraphPktRate" Text="0 pkt/s" Foreground="{DynamicResource SeverityInfoBrush}"
+                     FontSize="16" FontWeight="Bold" FontFamily="Consolas" Margin="0,0,0,6"/>
+
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+            <Border Width="12" Height="3" Background="{DynamicResource SeverityCriticalBrush}" CornerRadius="1" Margin="0,0,6,0" VerticalAlignment="Center"/>
+            <TextBlock Text="Alerts/s" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+          </StackPanel>
+          <TextBlock x:Name="GraphAlertRate" Text="0 /s" Foreground="{DynamicResource SeverityCriticalBrush}"
+                     FontSize="16" FontWeight="Bold" FontFamily="Consolas" Margin="0,0,0,6"/>
+
+          <TextBlock x:Name="GraphTimespan" Text="last 2 min" Foreground="{DynamicResource SubtleTextBrush}"
+                     FontSize="9" FontFamily="{DynamicResource PrimaryFont}"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Resize splitter between graph and tabs -->
+    <GridSplitter Grid.Row="5"
+                  Height="6"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Center"
+                  Background="{DynamicResource BorderBrush}"
+                  Cursor="SizeNS"
+                  ResizeDirection="Rows"
+                  ResizeBehavior="PreviousAndNext"
+                  ShowsPreview="True"
+                  ToolTip="Drag to resize graph"/>
+
+    <!-- TABS -->
+    <TabControl Grid.Row="6" Background="{DynamicResource BackgroundBrush}" BorderThickness="0" Margin="16,0,16,12">
+
+      <!-- ALERTS TAB -->
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🚨  Alerts" VerticalAlignment="Center"/>
+            <Border x:Name="AlertCountBadge" Background="{DynamicResource SeverityCriticalBrush}" CornerRadius="8" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center">
+              <TextBlock x:Name="AlertCountText" Text="0" Foreground="White" FontSize="10" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+            </Border>
+          </StackPanel>
+        </TabItem.Header>
+        <Grid Background="{DynamicResource BackgroundBrush}">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+          <!-- TOOLBAR -->
+          <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="10,6">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <WrapPanel Orientation="Horizontal">
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Padding="8,4" Margin="0,0,10,0" Width="230">
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="🔍" Foreground="{DynamicResource SubtleTextBrush}" VerticalAlignment="Center" FontSize="11" Margin="0,0,4,0"/>
+                    <TextBox x:Name="SearchBox" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0"
+                             FontFamily="{DynamicResource PrimaryFont}" FontSize="12" VerticalAlignment="Center" Width="195"
+                             TextChanged="SearchBox_TextChanged"/>
+                  </StackPanel>
+                </Border>
+                <Button x:Name="FilterAll"  Content="ALL"      Click="SeverityFilter_Click" Tag="ALL"      Style="{StaticResource FBtn}" Background="{DynamicResource HoverBrush}" Foreground="White"    BorderBrush="{DynamicResource BorderBrush}"    Margin="0,0,3,0"/>
+                <Button x:Name="FilterCrit" Content="CRITICAL" Click="SeverityFilter_Click" Tag="Critical" Style="{StaticResource FBtn}" Background="{DynamicResource SeverityCriticalBgBrush}" Foreground="{DynamicResource SeverityCriticalBrush}"  BorderBrush="{DynamicResource SeverityCriticalBrush}" Margin="0,0,3,0"/>
+                <Button x:Name="FilterHigh" Content="HIGH"     Click="SeverityFilter_Click" Tag="High"     Style="{StaticResource FBtn}" Background="{DynamicResource SeverityHighBgBrush}" Foreground="{DynamicResource SeverityHighBrush}"  BorderBrush="{DynamicResource SeverityHighBrush}" Margin="0,0,3,0"/>
+                <Button x:Name="FilterMed"  Content="MED"      Click="SeverityFilter_Click" Tag="Medium"   Style="{StaticResource FBtn}" Background="{DynamicResource SeverityMediumBgBrush}" Foreground="{DynamicResource SeverityMediumBrush}"  BorderBrush="{DynamicResource SeverityMediumBrush}" Margin="0,0,3,0"/>
+                <Button x:Name="FilterLow"  Content="LOW"      Click="SeverityFilter_Click" Tag="Low"      Style="{StaticResource FBtn}" Background="{DynamicResource SeverityLowBgBrush}" Foreground="{DynamicResource SeverityLowBrush}"  BorderBrush="{DynamicResource SeverityLowBrush}" Margin="0,0,12,0"/>
+                <TextBlock Text="|" Foreground="{DynamicResource BorderBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <Button x:Name="Time5m"  Content="5m"   Click="TimeFilter_Click" Tag="5"   Style="{StaticResource FBtn}" Margin="0,0,3,0"/>
+                <Button x:Name="Time30m" Content="30m"  Click="TimeFilter_Click" Tag="30"  Style="{StaticResource FBtn}" Margin="0,0,3,0"/>
+                <Button x:Name="Time1h"  Content="1h"   Click="TimeFilter_Click" Tag="60"  Style="{StaticResource FBtn}" Margin="0,0,3,0"/>
+                <Button x:Name="TimeAll" Content="All"  Click="TimeFilter_Click" Tag="0"   Style="{StaticResource FBtn}" Background="{DynamicResource HoverBrush}" Foreground="White" BorderBrush="{DynamicResource BorderBrush}"/>
+              </WrapPanel>
+              <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="✔ Ack"     Click="AcknowledgeSelected_Click" Style="{StaticResource FBtn}" Foreground="{DynamicResource SuccessBrush}" BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SecondaryBackgroundBrush}" Margin="0,0,4,0" Padding="9,4"/>
+                <Button Content="✔✔ Ack All" Click="AcknowledgeAll_Click"     Style="{StaticResource FBtn}" Foreground="{DynamicResource SuccessBrush}" BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SecondaryBackgroundBrush}" Margin="0,0,4,0" Padding="9,4"/>
+                <Button Content="🗑 Delete"  Click="DeleteSelected_Click"      Style="{StaticResource FBtn}" Foreground="{DynamicResource CriticalBrush}" BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SecondaryBackgroundBrush}" Margin="0,0,4,0" Padding="9,4"/>
+                <Button Content="🗑 Clear All" Click="ClearAlerts_Click"       Style="{StaticResource FBtn}" Foreground="#888"   BorderBrush="#444"   Margin="0,0,4,0"    Padding="9,4"/>
+                <Button Content="⬇ CSV"     Click="ExportCsv_Click"           Style="{StaticResource FBtn}" Foreground="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SecondaryBackgroundBrush}" Padding="9,4"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <!-- SPLIT -->
+          <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="3*" MinWidth="400"/>
+              <ColumnDefinition Width="4"/>
+              <ColumnDefinition x:Name="DetailCol" Width="340" MinWidth="0"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid x:Name="AlertsList" Grid.Column="0"
+                      SelectionChanged="AlertsList_SelectionChanged"
+                      VirtualizingPanel.IsVirtualizing="True">
+              <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding Severity}" Value="Critical">
+                      <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
+                      <Setter Property="Foreground" Value="{DynamicResource CriticalBrush}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Severity}" Value="High">
+                      <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
+                      <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsAcknowledged}" Value="True">
+                      <Setter Property="Opacity" Value="0.4"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </DataGrid.RowStyle>
+              <DataGrid.Columns>
+                <DataGridTemplateColumn Header=" " Width="20" CanUserResize="False">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <Ellipse Width="7" Height="7" HorizontalAlignment="Center" Fill="{Binding SeverityColor}"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Timestamp"    Binding="{Binding TimestampFormatted}" Width="150" FontFamily="Consolas"/>
+                <DataGridTemplateColumn Header="Severity" Width="78">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <Border CornerRadius="3" Padding="5,2" HorizontalAlignment="Left" Background="{Binding SeverityColor}">
+                        <TextBlock Text="{Binding SeverityText}" FontSize="10" FontWeight="Bold" Foreground="White" FontFamily="{DynamicResource PrimaryFont}"/>
+                      </Border>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Alert Type"   Binding="{Binding AlertType}"      Width="180"/>
+                <DataGridTextColumn Header="Source"       Binding="{Binding SourceEndpoint}" Width="145" FontFamily="Consolas"/>
+                <DataGridTextColumn Header="Destination"  Binding="{Binding DstEndpoint}"    Width="145" FontFamily="Consolas"/>
+                <DataGridTextColumn Header="Proto"        Binding="{Binding Protocol}"       Width="50"/>
+                <DataGridTextColumn Header="Category"     Binding="{Binding AttackCategory}" Width="120"/>
+                <DataGridTextColumn Header="Description"  Binding="{Binding Description}"   Width="*"/>
+              </DataGrid.Columns>
+            </DataGrid>
+
+            <GridSplitter Grid.Column="1" Width="4" Background="{DynamicResource BorderBrush}" HorizontalAlignment="Stretch"/>
+
+            <!-- DETAIL PANEL -->
+            <Border Grid.Column="2" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1,0,0,0">
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="DetailPanel" Margin="14,14,14,14">
+                  <TextBlock Text="Select an alert to see details" Foreground="{DynamicResource SubtleTextBrush}"
+                             FontSize="12" FontFamily="{DynamicResource PrimaryFont}" TextWrapping="Wrap"/>
+                </StackPanel>
+              </ScrollViewer>
+            </Border>
+          </Grid>
+        </Grid>
+      </TabItem>
+
+      <!-- BREAKDOWN TAB -->
+      <TabItem Header="📊  Breakdown">
+        <Grid Background="{DynamicResource BackgroundBrush}" Margin="12">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <TextBlock Grid.ColumnSpan="2" Text="Attack Distribution  ·  Top Triggered Rules"
+                     Foreground="White" FontSize="14" FontWeight="SemiBold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,10"/>
+          <DataGrid x:Name="TrafficAnalysisList" Grid.Row="1" Grid.Column="0" Margin="0,0,6,0">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"/>
+              <DataGridTextColumn Header="Count"    Binding="{Binding Count}"    Width="60"/>
+              <DataGridTextColumn Header="Last"     Binding="{Binding LastSeen}" Width="80"/>
+            </DataGrid.Columns>
+          </DataGrid>
+          <DataGrid x:Name="SignaturesList" Grid.Row="1" Grid.Column="1" Margin="6,0,0,0">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Rule"      Binding="{Binding Name}"     Width="*"/>
+              <DataGridTextColumn Header="Hits"      Binding="{Binding Count}"    Width="50"/>
+              <DataGridTextColumn Header="Category"  Binding="{Binding Category}" Width="110"/>
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </TabItem>
+
+      <!-- RULES TAB -->
+      <TabItem Header="📋  Rules">
+        <Grid Background="{DynamicResource BackgroundBrush}">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+          <!-- Action toolbar -->
+          <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="10,7">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <!-- Left: CRUD + Import/Export -->
+              <WrapPanel Orientation="Horizontal">
+                <Button Content="➕ Add"    Click="AddRule_Click"    Style="{StaticResource ABtn}" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource SuccessBrush}" BorderBrush="{DynamicResource BorderBrush}" Padding="11,4" Margin="0,0,4,0"/>
+                <Button x:Name="EditRuleBtn"   Content="✏ Edit"   Click="EditRule_Click"   Style="{StaticResource ABtn}" Padding="11,4" Margin="0,0,4,0" IsEnabled="False"/>
+                <Button x:Name="DeleteRuleBtn" Content="🗑 Delete" Click="DeleteRule_Click" Style="{StaticResource ABtn}" Foreground="{DynamicResource CriticalBrush}" BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SecondaryBackgroundBrush}" Padding="11,4" Margin="0,0,12,0" IsEnabled="False"/>
+                <Separator Width="1" Background="#333" Margin="0,2,12,2"/>
+                <Button Content="📥 Import JSON"   Click="ImportRules_Click"       Style="{StaticResource ABtn}" Padding="11,4" Margin="0,0,4,0"/>
+                <Button Content="📥 Import Snort"  Click="ImportSnortRules_Click"  Style="{StaticResource ABtn}" Padding="11,4" Margin="0,0,4,0" Foreground="{DynamicResource WarningBrush}" BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SecondaryBackgroundBrush}" ToolTip="Import Snort/Suricata .rules file"/>
+                <Button Content="📤 Export" Click="ExportRules_Click" Style="{StaticResource ABtn}" Padding="11,4" Margin="0,0,12,0"/>
+                <Separator Width="1" Background="#333" Margin="0,2,12,2"/>
+                <!-- Bulk by category -->
+                <ComboBox x:Name="BulkCategoryBox" Width="140" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                          BorderBrush="{DynamicResource BorderBrush}" Padding="6,4" FontSize="11" FontFamily="{DynamicResource PrimaryFont}"
+                          VerticalContentAlignment="Center" Margin="0,0,4,0"/>
+                <Button Content="Enable All"  Click="BulkEnable_Click"  Style="{StaticResource ABtn}" Padding="9,4" Margin="0,0,3,0" Foreground="{DynamicResource SuccessBrush}"/>
+                <Button Content="Disable All" Click="BulkDisable_Click" Style="{StaticResource ABtn}" Padding="9,4" Foreground="#888"/>
+              </WrapPanel>
+              <!-- Right: Reset to defaults -->
+              <Button Grid.Column="1" Content="↺ Reset Defaults" Click="ResetDefaultRules_Click"
+                      Style="{StaticResource ABtn}" Padding="10,4" Foreground="{DynamicResource SubtleTextBrush}"/>
+            </Grid>
+          </Border>
+
+          <!-- Info bar -->
+          <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="10,5">
+            <TextBlock x:Name="RulesInfoText" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"
+                       Text="Double-click a row to edit  ·  SIG = signature match  ·  BEHAVIORAL = threshold-based  ·  greyed = disabled"/>
+          </Border>
+
+          <!-- Rules grid -->
+          <DataGrid x:Name="RulesGrid" Grid.Row="2"
+                    MouseDoubleClick="RulesGrid_DoubleClick"
+                    SelectionChanged="RulesGrid_SelectionChanged">
+            <DataGrid.RowStyle>
+              <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsEnabled}" Value="False"><Setter Property="Opacity" Value="0.35"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Severity}" Value="Critical"><Setter Property="Foreground" Value="{DynamicResource CriticalBrush}"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Severity}" Value="High"><Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/></DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+              <DataGridTemplateColumn Header="On" Width="36" CanUserResize="False">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <CheckBox IsChecked="{Binding IsEnabled, Mode=OneWay}" HorizontalAlignment="Center"
+                              VerticalAlignment="Center" Click="RuleToggle_Click"
+                              Foreground="{DynamicResource SeverityLowBrush}" IsThreeState="False"/>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="ID"       Binding="{Binding RuleId}"                  Width="90"  FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Name"     Binding="{Binding Name}"                    Width="*"/>
+              <DataGridTemplateColumn Header="Sev"  Width="75">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Border CornerRadius="3" Padding="4,2" HorizontalAlignment="Left" Background="{Binding SeverityColor}">
+                      <TextBlock Text="{Binding SeverityText}" FontSize="10" FontWeight="Bold" Foreground="White" FontFamily="{DynamicResource PrimaryFont}"/>
+                    </Border>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="Proto"    Binding="{Binding Protocol}"                Width="55"/>
+              <DataGridTextColumn Header="Dst Port" Binding="{Binding DestinationPort}"         Width="110" FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Category" Binding="{Binding AttackCategory}"          Width="125"/>
+              <DataGridTextColumn Header="Kind"     Binding="{Binding RuleKind}"                Width="80"/>
+              <DataGridTextColumn Header="Hits"     Binding="{Binding TriggerCount}"            Width="46"  FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Last Hit" Binding="{Binding LastTriggeredFormatted}"  Width="140" FontFamily="Consolas"/>
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </TabItem>
+
+      <!-- BEHAVIORAL THRESHOLDS TAB -->
+      <TabItem Header="⚙  Behavioral">
+        <ScrollViewer Background="{DynamicResource BackgroundBrush}" VerticalScrollBarVisibility="Auto">
+          <StackPanel Margin="20">
+            <TextBlock Text="Behavioral Detection Thresholds" Foreground="White" FontSize="14"
+                       FontWeight="SemiBold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,4"/>
+            <TextBlock Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,20"
+                       Text="Changes take effect immediately. Counters are reset on apply so active floods re-accumulate from zero."/>
+
+            <!-- Helper style defined inline via direct properties -->
+            <Border Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="16,14" Margin="0,0,0,10">
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="12"/><ColumnDefinition Width="120"/></Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="SYN FLOOD" Foreground="{DynamicResource SeverityCriticalBrush}" FontSize="11" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+                  <TextBlock Text="Detects SYN-based DoS attacks" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="THRESHOLD (packets)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="SynThreshBox" Text="200" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+                <StackPanel Grid.Column="4">
+                  <TextBlock Text="WINDOW (seconds)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="SynWindowBox" Text="5" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+              </Grid>
+            </Border>
+
+            <Border Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="16,14" Margin="0,0,0,10">
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="12"/><ColumnDefinition Width="120"/></Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="ICMP FLOOD" Foreground="{DynamicResource SeverityHighBrush}" FontSize="11" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+                  <TextBlock Text="Ping floods / Smurf attacks" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="THRESHOLD (packets)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="IcmpThreshBox" Text="100" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+                <StackPanel Grid.Column="4">
+                  <TextBlock Text="WINDOW (seconds)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="IcmpWindowBox" Text="10" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+              </Grid>
+            </Border>
+
+            <Border Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="16,14" Margin="0,0,0,10">
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="12"/><ColumnDefinition Width="120"/></Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="UDP FLOOD" Foreground="{DynamicResource SeverityHighBrush}" FontSize="11" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+                  <TextBlock Text="UDP-based volumetric attacks" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="THRESHOLD (packets)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="UdpThreshBox" Text="500" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+                <StackPanel Grid.Column="4">
+                  <TextBlock Text="WINDOW (seconds)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="UdpWindowBox" Text="5" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+              </Grid>
+            </Border>
+
+            <Border Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="16,14" Margin="0,0,0,10">
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="12"/><ColumnDefinition Width="120"/></Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="PORT SCAN" Foreground="{DynamicResource SeverityMediumBrush}" FontSize="11" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+                  <TextBlock Text="Horizontal scan reconnaissance" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="THRESHOLD (distinct ports)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="PortScanThreshBox" Text="25" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+                <StackPanel Grid.Column="4">
+                  <TextBlock Text="WINDOW (seconds)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="PortScanWindowBox" Text="10" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+              </Grid>
+            </Border>
+
+            <Border Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="16,14" Margin="0,0,0,20">
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/><ColumnDefinition Width="120"/><ColumnDefinition Width="12"/><ColumnDefinition Width="120"/></Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="BRUTE FORCE" Foreground="{DynamicResource SeverityLowBrush}" FontSize="11" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+                  <TextBlock Text="SSH / RDP / FTP credential attacks" Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="THRESHOLD (attempts)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="BruteThreshBox" Text="10" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+                <StackPanel Grid.Column="4">
+                  <TextBlock Text="WINDOW (seconds)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,3"/>
+                  <TextBox x:Name="BruteWindowBox" Text="60" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                           BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,5" FontFamily="Consolas" FontSize="12"/>
+                </StackPanel>
+              </Grid>
+            </Border>
+
+            <StackPanel Orientation="Horizontal">
+              <Button Content="✔  Apply Thresholds" Click="ApplyThresholds_Click"
+                      Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource SuccessBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                      Padding="18,8" FontSize="12" FontWeight="SemiBold" FontFamily="{DynamicResource PrimaryFont}" Cursor="Hand" Margin="0,0,10,0">
+                <Button.Template>
+                  <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </ControlTemplate>
+                </Button.Template>
+              </Button>
+              <Button Content="↺  Restore Defaults" Click="ResetThresholds_Click"
+                      Style="{StaticResource ABtn}" Padding="14,8"/>
+              <TextBlock x:Name="ThresholdStatusText" Foreground="{DynamicResource SuccessBrush}" FontSize="11"
+                         FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center" Margin="14,0,0,0"/>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <!-- INTERFACES TAB -->
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🔌  Interfaces" VerticalAlignment="Center"/>
+            <Border Background="{DynamicResource AccentBrush}" CornerRadius="8" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center">
+              <TextBlock x:Name="ActiveInterfacesText" Text="0" Foreground="White" FontSize="10" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+            </Border>
+          </StackPanel>
+        </TabItem.Header>
+        <Grid Background="{DynamicResource BackgroundBrush}" Margin="16">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <TextBlock Grid.Row="0" Text="Capture Interfaces" Foreground="White" FontSize="14" FontWeight="SemiBold" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,4"/>
+          <TextBlock Grid.Row="1" Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" Margin="0,0,0,12"
+                     Text="Run as Administrator to see all interfaces. Click Interface in the header to select."/>
+          <ItemsControl x:Name="ProtocolAnalysisList" Grid.Row="2">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}" CornerRadius="4" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="14,10" Margin="0,0,0,5">
+                  <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Count}" Foreground="{DynamicResource SeverityInfoBrush}" FontFamily="Consolas" FontSize="12" VerticalAlignment="Center" Margin="0,0,14,0" Width="30"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Name}"  Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Column="2" Text="Available"       Foreground="{DynamicResource SeverityLowBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Grid>
+      </TabItem>
+
+      <!-- CORRELATION TAB -->
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🔗  Correlation" VerticalAlignment="Center"/>
+            <Border x:Name="CorrCountBadge" Background="{DynamicResource WarningBrush}" CornerRadius="8" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center">
+              <TextBlock x:Name="CorrCountText" Text="0" Foreground="White" FontSize="10" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+            </Border>
+          </StackPanel>
+        </TabItem.Header>
+        <Grid Background="{DynamicResource BackgroundBrush}">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="10,6">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <TextBlock Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center"
+                         Text="Groups alerts by source IP within 5 min window  ·  Kill Chain = Recon + Exploit + C2 from same source  ·  Auto-refreshes"/>
+              <Button Grid.Column="1" Content="↺ Refresh" Click="RefreshCorrelation_Click" Style="{StaticResource FBtn}" Padding="10,4"/>
+            </Grid>
+          </Border>
+          <Border Grid.Row="1" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="10,5">
+            <TextBlock x:Name="KillChainBanner" Text="" Foreground="{DynamicResource WarningBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" FontWeight="SemiBold"/>
+          </Border>
+          <DataGrid x:Name="CorrelationGrid" Grid.Row="2" VirtualizingPanel.IsVirtualizing="True">
+            <DataGrid.RowStyle>
+              <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsKillChain}" Value="True"><Setter Property="Background" Value="{DynamicResource HoverBrush}"/><Setter Property="Foreground" Value="{DynamicResource CriticalBrush}"/></DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+              <DataGridTemplateColumn Header=" " Width="20" CanUserResize="False">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Ellipse Width="7" Height="7" HorizontalAlignment="Center" Fill="{Binding MaxSeverityColor}"/>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="Source IP"    Binding="{Binding SourceIP}"            Width="135" FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Alerts"       Binding="{Binding AlertCount}"           Width="55"  FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Categories"   Binding="{Binding Categories}"           Width="*"/>
+              <DataGridTextColumn Header="First Seen"   Binding="{Binding FirstSeenFormatted}"  Width="80"  FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Last Alert"   Binding="{Binding LastSeenFormatted}"   Width="80"  FontFamily="Consolas"/>
+              <DataGridTemplateColumn Header="Kill Chain" Width="100">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding KillChainDisplay}" Foreground="{DynamicResource SeverityCriticalBrush}" FontWeight="Bold" FontSize="11" FontFamily="{DynamicResource PrimaryFont}"/>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </TabItem>
+
+      <!-- ALLOWLIST TAB -->
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🛡  Allowlist" VerticalAlignment="Center"/>
+            <Border x:Name="AllowlistBadge" Background="{DynamicResource AccentBrush}" CornerRadius="8" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center">
+              <TextBlock x:Name="AllowlistCountText" Text="0" Foreground="White" FontSize="10" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+            </Border>
+          </StackPanel>
+        </TabItem.Header>
+        <Grid Background="{DynamicResource BackgroundBrush}">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="10,7">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <TextBlock Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center"
+                         Text="Allowlisted IPs/CIDRs are never alerted — suppress noise from scanners, known IPs, internal hosts"/>
+              <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="➕ Add Entry"     Click="AddAllowlist_Click"     Style="{StaticResource FBtn}" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource SuccessBrush}" BorderBrush="{DynamicResource BorderBrush}" Padding="10,4" Margin="0,0,4,0"/>
+                <Button x:Name="RemoveAllowlistBtn" Content="🗑 Remove Selected" Click="RemoveAllowlist_Click" Style="{StaticResource FBtn}" Foreground="{DynamicResource CriticalBrush}" BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SecondaryBackgroundBrush}" Padding="10,4" IsEnabled="False"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+          <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" Padding="10,5">
+            <TextBlock Foreground="{DynamicResource SubtleTextBrush}" FontSize="10" FontFamily="{DynamicResource PrimaryFont}"
+                       Text="Supports exact IP (192.168.1.10), CIDR (192.168.0.0/24), optional Rule ID (leave blank = suppress all rules)  ·  Set expiry date to auto-remove"/>
+          </Border>
+          <DataGrid x:Name="AllowlistGrid" Grid.Row="2" SelectionChanged="AllowlistGrid_SelectionChanged">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="IP / CIDR"   Binding="{Binding IpOrCidr}"      Width="160" FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Rule ID"     Binding="{Binding RuleDisplay}"    Width="110"/>
+              <DataGridTextColumn Header="Note"        Binding="{Binding Note}"           Width="*"/>
+              <DataGridTextColumn Header="Added"       Binding="{Binding AddedDate, StringFormat='yyyy-MM-dd HH:mm'}" Width="130" FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Expires"     Binding="{Binding ExpiryDisplay}"  Width="130" FontFamily="Consolas"/>
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </TabItem>
+
+      <!-- IPS / BLOCKED IPs TAB -->
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="🚫  IPS" VerticalAlignment="Center"/>
+            <Border x:Name="BlockedBadge" Background="{DynamicResource SeverityCriticalBrush}" CornerRadius="8" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center">
+              <TextBlock x:Name="BlockedCountText" Text="0" Foreground="White" FontSize="10" FontWeight="Bold" FontFamily="{DynamicResource PrimaryFont}"/>
+            </Border>
+          </StackPanel>
+        </TabItem.Header>
+        <Grid Background="{DynamicResource BackgroundBrush}">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+
+          <!-- IPS toggle row -->
+          <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="14,10">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Intrusion Prevention Mode (IPS)" Foreground="White" FontSize="13" FontWeight="SemiBold" FontFamily="{DynamicResource PrimaryFont}"/>
+                <TextBlock Text="When enabled, Critical alerts auto-block the source IP via Windows Firewall (requires Administrator)" Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" TextWrapping="Wrap"/>
+              </StackPanel>
+              <Button x:Name="IpsModeToggle" Grid.Column="1" Content="Enable IPS" Click="ToggleIpsMode_Click"
+                      Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource SuccessBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                      Padding="16,8" FontSize="12" FontWeight="SemiBold" FontFamily="{DynamicResource PrimaryFont}" Cursor="Hand">
+                <Button.Template>
+                  <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                  </ControlTemplate>
+                </Button.Template>
+              </Button>
+            </Grid>
+          </Border>
+
+          <!-- Manual block input -->
+          <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="14,8">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <TextBox x:Name="ManualBlockIpBox" Grid.Column="0" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                       BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,6" FontFamily="Consolas" FontSize="12"
+                       VerticalContentAlignment="Center" Margin="0,0,6,0"/>
+              <Button Grid.Column="1" Content="🚫 Block IP" Click="ManualBlock_Click" Style="{StaticResource FBtn}"
+                      Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource CriticalBrush}" BorderBrush="{DynamicResource BorderBrush}" Padding="10,6" Margin="0,0,4,0"/>
+              <Button Grid.Column="2" Content="Unblock All" Click="UnblockAll_Click" Style="{StaticResource FBtn}" Foreground="#888" Padding="10,6"/>
+            </Grid>
+          </Border>
+
+          <!-- Status text -->
+          <Border Grid.Row="2" Padding="14,4">
+            <TextBlock x:Name="IpsStatusText" Foreground="{DynamicResource SuccessBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}"/>
+          </Border>
+
+          <!-- Blocked IPs grid -->
+          <DataGrid x:Name="BlockedGrid" Grid.Row="3">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="IP Address"    Binding="{Binding IP}"                   Width="145" FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Blocked At"    Binding="{Binding BlockedAtFormatted}"   Width="145" FontFamily="Consolas"/>
+              <DataGridTextColumn Header="Reason"        Binding="{Binding Reason}"               Width="*"/>
+              <DataGridTextColumn Header="Category"      Binding="{Binding AlertType}"            Width="120"/>
+              <DataGridTemplateColumn Header="Action" Width="90">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Button Content="Unblock" Tag="{Binding IP}" Click="UnblockOne_Click"
+                            Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource WarningBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                            Padding="6,2" FontSize="10" FontFamily="{DynamicResource PrimaryFont}" Cursor="Hand">
+                      <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                          </Border>
+                        </ControlTemplate>
+                      </Button.Template>
+                    </Button>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </TabItem>
+
+      <!-- TIMELINE TAB -->
+      <TabItem Header="📈  Timeline">
+        <Grid Background="{DynamicResource BackgroundBrush}">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+
+          <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="10,7">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <TextBlock Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center"
+                         Text="Alert frequency over the last 24 hours  ·  Bar height = alert count  ·  Color = max severity in that hour"/>
+              <Button Grid.Column="1" Content="↺ Refresh" Click="RefreshTimeline_Click" Style="{StaticResource FBtn}" Padding="10,4"/>
+            </Grid>
+          </Border>
+
+          <!-- Legend -->
+          <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" Padding="14,6">
+            <StackPanel Orientation="Horizontal">
+              <Border Width="14" Height="14" Background="{DynamicResource SeverityCriticalBrush}" CornerRadius="2" Margin="0,0,5,0"/>
+              <TextBlock Text="Critical  " Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+              <Border Width="14" Height="14" Background="{DynamicResource SeverityHighBrush}" CornerRadius="2" Margin="0,0,5,0"/>
+              <TextBlock Text="High  " Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+              <Border Width="14" Height="14" Background="{DynamicResource SeverityMediumBrush}" CornerRadius="2" Margin="0,0,5,0"/>
+              <TextBlock Text="Medium  " Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+              <Border Width="14" Height="14" Background="{DynamicResource SeverityLowBrush}" CornerRadius="2" Margin="0,0,5,0"/>
+              <TextBlock Text="Low / None" Foreground="{DynamicResource SubtleTextBrush}" FontSize="11" FontFamily="{DynamicResource PrimaryFont}" VerticalAlignment="Center"/>
+            </StackPanel>
+          </Border>
+
+          <!-- Chart -->
+          <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="16">
+            <ItemsControl x:Name="TimelineChart">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" VerticalAlignment="Bottom"/></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Vertical" Width="42" Margin="1,0" VerticalAlignment="Bottom">
+                    <TextBlock Text="{Binding Count}" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontFamily="{DynamicResource PrimaryFont}" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                    <Border Height="{Binding BarHeight}" Background="{Binding Color}" CornerRadius="2,2,0,0" ToolTip="{Binding Tooltip}"/>
+                    <TextBlock Text="{Binding Hour}" Foreground="{DynamicResource SubtleTextBrush}" FontSize="9" FontFamily="Consolas" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </TabItem>
+
+    </TabControl>
+  </Grid>
+</Page>
