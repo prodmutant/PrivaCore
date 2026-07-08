@@ -408,7 +408,8 @@ JSON only:
             {
                 var testUrl = "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=apache&resultsPerPage=1";
                 var request = new HttpRequestMessage(HttpMethod.Get, testUrl);
-                request.Headers.Add("apiKey", _nvdApiKey);
+                if (!string.IsNullOrWhiteSpace(_nvdApiKey))
+                    request.Headers.Add("apiKey", _nvdApiKey);
                 var response = await _httpClient.SendAsync(request);
                 return response.IsSuccessStatusCode;
             }
@@ -440,7 +441,8 @@ JSON only:
                 Console.WriteLine($"   🌐 Querying: {searchTerm}");
 
                 var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-                request.Headers.Add("apiKey", _nvdApiKey.Trim());
+                if (!string.IsNullOrWhiteSpace(_nvdApiKey))
+                    request.Headers.Add("apiKey", _nvdApiKey.Trim());
 
                 var response = await _httpClient.SendAsync(request);
 

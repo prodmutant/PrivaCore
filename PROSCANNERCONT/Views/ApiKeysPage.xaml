@@ -1,0 +1,41 @@
+<Page x:Class="PROSCANNERCONT.Views.ApiKeysPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+      Background="{DynamicResource BackgroundBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="32">
+            <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+
+                <!-- Header -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <fa:IconBlock Icon="Key" FontSize="20" Foreground="{DynamicResource SuccessBrush}"
+                                  VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="API Keys" FontSize="24" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="Add the API keys the toolkit uses for enrichment and lookups. Keys are optional — the tools work without them, some at reduced rate limits."
+                           FontSize="13" Foreground="{DynamicResource SubtleTextBrush}"
+                           TextWrapping="Wrap" Margin="0,0,0,16"/>
+
+                <!-- Security note -->
+                <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                        CornerRadius="8" Padding="14,10" Margin="0,0,0,20">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Lock" FontSize="13" Foreground="{DynamicResource SuccessBrush}"
+                                      VerticalAlignment="Top" Margin="0,2,10,0"/>
+                        <TextBlock TextWrapping="Wrap" FontSize="12.5"
+                                   Foreground="{DynamicResource SubtleTextBrush}"
+                                   Text="Keys are stored encrypted at rest with Windows DPAPI (current-user scope) in %APPDATA%\PrivaCore. They never leave this machine and are only sent to their own provider. Saved keys are never shown back to you."/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Key rows are built in code-behind -->
+                <StackPanel x:Name="KeysHost"/>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

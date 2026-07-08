@@ -453,6 +453,7 @@
                 <Setter Property="CaretBrush" Value="{DynamicResource AccentBrush}"/>
                 <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush}"/>
                 <Setter Property="SelectionOpacity" Value="0.4"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="TextBox">
@@ -461,9 +462,13 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="{DynamicResource CornerRadiusNormal}">
+                                <!-- Padding on the ScrollViewer (not the Border) so descenders are never clipped;
+                                     border thickness stays constant on focus so text never shifts while typing. -->
                                 <ScrollViewer x:Name="PART_ContentHost"
-                                              Margin="{TemplateBinding Padding}"
-                                              VerticalAlignment="Center"/>
+                                              Focusable="False"
+                                              Padding="{TemplateBinding Padding}"
+                                              HorizontalScrollBarVisibility="Hidden"
+                                              VerticalScrollBarVisibility="Hidden"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
@@ -471,7 +476,9 @@
                                 </Trigger>
                                 <Trigger Property="IsFocused" Value="True">
                                     <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-                                    <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.5"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -492,6 +499,7 @@
                 <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
                 <Setter Property="CaretBrush" Value="{DynamicResource AccentBrush}"/>
                 <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush}"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="PasswordBox">
@@ -500,9 +508,12 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="{DynamicResource CornerRadiusNormal}">
+                                <!-- Padding on the ScrollViewer (not the Border) so the masked dots never clip. -->
                                 <ScrollViewer x:Name="PART_ContentHost"
-                                              Margin="{TemplateBinding Padding}"
-                                              VerticalAlignment="Center"/>
+                                              Focusable="False"
+                                              Padding="{TemplateBinding Padding}"
+                                              HorizontalScrollBarVisibility="Hidden"
+                                              VerticalScrollBarVisibility="Hidden"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
@@ -510,7 +521,9 @@
                                 </Trigger>
                                 <Trigger Property="IsFocused" Value="True">
                                     <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-                                    <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.5"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

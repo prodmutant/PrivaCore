@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using PROSCANNERCONT.Security.Auth;
 
 namespace PROSCANNERCONT.Views
 {
@@ -145,6 +146,20 @@ namespace PROSCANNERCONT.Views
             if (string.IsNullOrEmpty(_currentPwd.Password)) { ShowError("Current password is required."); return; }
             if (_newPwd.Password.Length < 8)               { ShowError("New password must be at least 8 characters."); return; }
             if (_newPwd.Password != _confirmPwd.Password)  { ShowError("New passwords do not match."); return; }
+
+            var user = SessionService.Instance.Current;
+            if (user == null) { ShowError("No user is signed in."); return; }
+
+            // Verify the current password against the store before allowing a change.
+            var check = new LocalIdentityProvider().Authenticate(user.Username, _currentPwd.Password);
+            if (!check.Ok) { ShowError("Current password is incorrect."); return; }
+
+            if (_newPwd.Password == _currentPwd.Password)
+            { ShowError("New password must be different from the current one."); return; }
+
+            if (!UserStore.Instance.SetPassword(user.Username, _newPwd.Password))
+            { ShowError("Could not update the password. Please try again."); return; }
+
             DialogResult = true;
         }
 

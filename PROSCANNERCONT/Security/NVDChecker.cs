@@ -116,9 +116,11 @@ namespace PROSCANNERCONT.Security
                 var url = $"{NVD_API_URL}?keywordSearch={Uri.EscapeDataString(keyword)}" +
                           $"&resultsPerPage={resultsPerPage}";
 
-                // Add API key per-request (same approach as CVEDetailsWindow which is known to work)
+                // Add the NVD API key per-request only when one is configured. NVD works keyless
+                // (lower rate limit); sending an EMPTY apiKey header makes NVD reject the request.
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
-                request.Headers.Add("apiKey", NVD_API_KEY);
+                if (!string.IsNullOrWhiteSpace(NVD_API_KEY))
+                    request.Headers.Add("apiKey", NVD_API_KEY);
 
                 var response = await _client.SendAsync(request);
                 if (!response.IsSuccessStatusCode) return issues;

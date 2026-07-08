@@ -196,15 +196,14 @@ namespace PROSCANNERCONT
                     "Miscellaneous"
                     or "Port Scanner"       => new Views.MiscellaneousPage(),
                     "Gallery"               => new Views.GalleryPage(),
-                    "Achievements"          => new Views.AchievementsPage(),
                     "Profile"               => new Views.ProfilePage(),
                     "Settings"              => new Views.SettingsPage(),
                     "User Management"       => new Views.UserManagementPage(),
+                    "API Keys"              => new Views.ApiKeysPage(),
                     "Honeypot Management"
                     or "Honeypot"           => new Views.HoneypotDashboardPage(),
                     "Intrusion Detection"   => new Views.NetworkIDSDashboardPage(),
                     "POC Explorer"          => new Views.POCExplorerPage(),
-                    "Vulnerability Scanner" => new Views.VulnerabilityScannerPage(),
                     _                       => null
                 };
 
@@ -228,10 +227,11 @@ namespace PROSCANNERCONT
         /// <summary>The permission a page requires to open. Scanner tools need RunScans; the rest are viewable.</summary>
         private static Permission RequiredPermission(string pageName) => pageName switch
         {
-            "Port Scanner" or "Miscellaneous" or "Vulnerability Scanner"
+            "Port Scanner" or "Miscellaneous"
               or "Network Discovery" or "Network Topology" or "Traffic Analysis"
               or "New Scan" or "POC Explorer" => Permission.RunScans,
             "User Management" => Permission.ManageUsers,
+            "API Keys" => Permission.ManageSettings,
             _ => Permission.ViewDashboards,
         };
 
@@ -250,6 +250,9 @@ namespace PROSCANNERCONT
             if (SessionUserText != null) SessionUserText.Text = u.DisplayName;
             if (SessionRoleText != null) SessionRoleText.Text = RoleLabel(u.Role);
         }
+
+        /// <summary>Public hook so the Profile page can refresh the nav profile chip after an edit.</summary>
+        public void RefreshProfileChip() => RefreshSessionUi();
 
         /// <summary>Hide nav entries the signed-in role can't use (the NavigateToPage guard is the real gate).</summary>
         private void ApplyRolePermissions()
@@ -533,11 +536,10 @@ namespace PROSCANNERCONT
                 "MiscellaneousPage"        => "Port Scanner",
                 "TrafficAnalysisPage"      => "Traffic Analysis",
                 "Add"                      => "New Scan",
-                "VulnerabilityScannerPage" => "Vulnerability Scanner",
                 "GalleryPage"              => "Gallery",
-                "AchievementsPage"         => "Achievements",
                 "ProfilePage"              => "Profile",
                 "SettingsPage"             => "Settings",
+                "ApiKeysPage"              => "API Keys",
                 "HoneypotDashboardPage"    => "Honeypot Management",
                 "IDSRouterPage"            => "Intrusion Detection",
                 "HostIDSDashboardPage"     => "Host-Based IDS",

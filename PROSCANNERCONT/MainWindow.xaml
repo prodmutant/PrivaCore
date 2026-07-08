@@ -485,9 +485,6 @@
                                 <Button Content="Port Scanner" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
                                     <Button.Tag><fa:IconBlock Icon="MagnifyingGlass" Foreground="{DynamicResource AccentBrush}" FontSize="15"/></Button.Tag>
                                 </Button>
-                                <Button Content="Vulnerability Scanner" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
-                                    <Button.Tag><fa:IconBlock Icon="Bug" Foreground="{DynamicResource WarningBrush}" FontSize="15"/></Button.Tag>
-                                </Button>
                                 <Button Content="Network Discovery" Style="{StaticResource NavButtonStyle}" Click="NavigationButton_Click">
                                     <Button.Tag><fa:IconBlock Icon="Sitemap" Foreground="{DynamicResource AccentBrush}" FontSize="15"/></Button.Tag>
                                 </Button>
@@ -543,17 +540,6 @@
                                 <!-- ── WORKSPACE ── -->
                                 <TextBlock Text="WORKSPACE" Style="{StaticResource NavSectionLabel}"/>
 
-                                <Button x:Name="AchievementsButton"
-                                        Content="Achievements"
-                                        Style="{StaticResource NavButtonStyle}"
-                                        Click="NavigationButton_Click">
-                                    <Button.Tag>
-                                        <fa:IconBlock Icon="Trophy"
-                                                      Foreground="{DynamicResource WarningBrush}"
-                                                      FontSize="15"/>
-                                    </Button.Tag>
-                                </Button>
-
                                 <Button x:Name="GalleryButton"
                                         Content="Gallery"
                                         Style="{StaticResource NavButtonStyle}"
@@ -575,6 +561,16 @@
                                         <Button.Tag>
                                             <fa:IconBlock Icon="Users"
                                                           Foreground="{DynamicResource AccentBrush}"
+                                                          FontSize="15"/>
+                                        </Button.Tag>
+                                    </Button>
+                                    <Button x:Name="ApiKeysButton"
+                                            Content="API Keys"
+                                            Style="{StaticResource NavButtonStyle}"
+                                            Click="NavigationButton_Click">
+                                        <Button.Tag>
+                                            <fa:IconBlock Icon="Key"
+                                                          Foreground="{DynamicResource SuccessBrush}"
                                                           FontSize="15"/>
                                         </Button.Tag>
                                     </Button>

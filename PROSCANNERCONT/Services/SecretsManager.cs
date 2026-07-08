@@ -16,15 +16,14 @@ namespace PROSCANNERCONT.Services
     /// (e.g. the free public NVD demo key) so the app keeps working out of the
     /// box without any secrets configured.
     ///
-    /// This replaces the historical pattern of hardcoded API keys and HMAC
-    /// secrets baked directly into source files (NVDChecker.cs, LicenseService.cs).
+    /// This replaces the historical pattern of hardcoded API keys baked directly
+    /// into source files (e.g. NVDChecker.cs).
     /// </summary>
     public static class SecretsManager
     {
         public const string KeyNvdApiKey       = "NVD_API_KEY";
         public const string KeyOpenAiApiKey    = "OPENAI_API_KEY";
         public const string KeyAnthropicApiKey = "ANTHROPIC_API_KEY";
-        public const string KeyLicenseHmac     = "LICENSE_HMAC_SECRET";
         public const string KeyShodanApiKey    = "SHODAN_API_KEY";
         public const string KeyCensysApiId     = "CENSYS_API_ID";
         public const string KeyCensysApiSecret = "CENSYS_API_SECRET";
@@ -32,11 +31,9 @@ namespace PROSCANNERCONT.Services
         public const string KeyOtxApiKey       = "OTX_API_KEY";
 
         // Built-in defaults.  Intentionally EMPTY in the open-source build — no
-        // API keys or signing secrets are shipped in source.  Configure secrets at
-        // runtime through Settings → Secrets, or via the matching environment
-        // variables (e.g. NVD_API_KEY, LICENSE_HMAC_SECRET).  NVD CVE lookups work
-        // without a key at a lower rate limit; supply LICENSE_HMAC_SECRET per build
-        // if you ship signed licenses.
+        // API keys are shipped in source.  Configure keys at runtime through the
+        // API Keys page (or the matching environment variables, e.g. NVD_API_KEY).
+        // NVD CVE lookups work without a key at a lower rate limit.
         private static readonly System.Collections.Generic.Dictionary<string, string> _builtinDefaults =
             new(StringComparer.OrdinalIgnoreCase)
             {

@@ -1,0 +1,43 @@
+# ── Build output ─────────────────────────────────────────────
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*_wpftmp.csproj
+
+# ── Local secrets / API keys / runtime config — never commit ──
+appsettings.json
+appsettings.*.json
+secrets.dat
+secrets.json
+*.env
+.env
+.env.*
+
+# ── Runtime-generated state / scan output (real network/PII) ──
+gallery.json
+scanHistory.json
+hostCountState.json
+miscellaneousPageState.json
+networkScanResults.json
+recentScanResults.json
+vulnerabilityPageState.json
+vulnerabilityScanResults.json
+vulnerabilityState.json
+
+# ── Archives / binaries that shouldn't live in the repo ──────
+*.rar
+*.zip
+*.7z
+*.exe
+*.dll
+*.pdb
+
+# ── OS / editor cruft ────────────────────────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
