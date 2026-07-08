@@ -19,7 +19,7 @@ namespace PROSCANNERCONT.Services.Siem.Elastic
     /// This is a sketch, NOT wired up by default. To try it:
     ///   <c>SiemStoreProvider.Current = new ElasticSiemStore(new SiemEsConfig { BaseUrl = "...", Index = "..." });</c>
     ///
-    /// Known gaps before this is production-ready (the multi-week lift in CLAUDE.md §7.1):
+    /// Known gaps before this is production-ready (a multi-week lift):
     ///  • <see cref="ISiemStore"/> is synchronous but ES is async — calls here block on the HTTP task
     ///    (<c>.GetAwaiter().GetResult()</c>). The real fix is an async store interface so the WPF UI
     ///    never blocks the dispatcher.
